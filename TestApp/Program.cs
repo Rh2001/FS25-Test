@@ -9,10 +9,11 @@ builder.Services.AddCors(options =>
 
 /*// Add services to the container.
 builder.Services.AddControllersWithViews();*/
+builder.Services.AddControllers();
 
 var app = builder.Build();
 app.UseCors("AllowReactApp");
-
+app.MapControllers();
 app.Run();
 
 /*
