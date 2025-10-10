@@ -1,14 +1,25 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 function TestComponent() {
+  const [customers, setCustomers] = useState([]);
+
   useEffect(() => {
-    fetch("http://localhost:5148/api/API")
+    fetch("http://localhost:5148/api/API/customers")
       .then((response) => response.json())
-      .then((data) => console.log(data))
+      .then((data) => setCustomers(data))
       .catch((error) => console.error("Error fetching data:", error));
   }, []);
 
-  return <div>Check the console for API response.</div>;
+  return (
+    <div>
+      <h2>Customers</h2>
+      <ul>
+        {customers.map((customer) => (
+          <li key={customer.id}>{customer.name}</li>
+        ))}
+      </ul>
+    </div>
+  );
 }
 
 export default TestComponent;

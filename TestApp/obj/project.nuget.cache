@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "P0H7d3XdbS4=",
+  "dgSpecHash": "f9YxnXFjZow=",
   "success": true,
-  "projectFilePath": "D:\\FS25 Test\\TestApp\\TestApp.csproj",
+  "projectFilePath": "D:\\FS25 Test\\testapp\\TestApp.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\roori\\.nuget\\packages\\dnsclient\\1.6.1\\dnsclient.1.6.1.nupkg.sha512",
     "C:\\Users\\roori\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\2.0.0\\microsoft.extensions.logging.abstractions.2.0.0.nupkg.sha512",
