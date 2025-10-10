@@ -1,3 +1,8 @@
+using TestApp.Models;
+using MongoDB.Driver;
+using TestApp.Services;
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Adding CORS support to our backend
@@ -6,6 +11,11 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowReactApp",
     builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 });
+
+// Configure MongoDB settings
+builder.Services.Configure<MongoDBSettings>(builder.Configuration.GetSection("MongoDBConnection")); // Bind the "MongoDBConnection" section
+builder.Services.AddSingleton<StoreServices>();      //Add MongoDB StoreServices to communicate with MongoDB
+ 
 
 /*// Add services to the container.
 builder.Services.AddControllersWithViews();*/
