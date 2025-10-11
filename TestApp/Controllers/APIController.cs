@@ -1,24 +1,31 @@
-// To do: Fix the Async method
-
 using System.Diagnostics;
 using TestApp.Services;
 using TestApp.Models;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/customer")]
 public class APIController : ControllerBase
 {
     private readonly CustomerServices _customerServices;
+
+    // Initialize the CustomerServices with a constructor
     public APIController(CustomerServices customerServices)
     {
         _customerServices = customerServices;
+    }   
+    
+
+    [HttpGet]
+    public async Task<List<Customer>> Get()
+    {
+        return await _customerServices.GetAsyncCustomers();
     }
 
-    [HttpGet("customers")]
-    public async Task<ActionResult<List<Customer>>> GetCustomers()
+    [HttpGet("{id}")]
+    public string Get(int id)
     {
-        var customers = await _customerServices.GetAsyncCustomers();
-        return Ok(customers);
+        return "value";
     }
+
 }

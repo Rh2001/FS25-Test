@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\FS25 Test\\testapp\\TestApp.csproj": {}
+    "D:\\FS25 Test\\Testapp\\TestApp.csproj": {}
   },
   "projects": {
-    "D:\\FS25 Test\\testapp\\TestApp.csproj": {
+    "D:\\FS25 Test\\Testapp\\TestApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\FS25 Test\\testapp\\TestApp.csproj",
+        "projectUniqueName": "D:\\FS25 Test\\Testapp\\TestApp.csproj",
         "projectName": "TestApp",
-        "projectPath": "D:\\FS25 Test\\testapp\\TestApp.csproj",
+        "projectPath": "D:\\FS25 Test\\Testapp\\TestApp.csproj",
         "packagesPath": "C:\\Users\\roori\\.nuget\\packages\\",
-        "outputPath": "D:\\FS25 Test\\testapp\\obj\\",
+        "outputPath": "D:\\FS25 Test\\Testapp\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "D:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
