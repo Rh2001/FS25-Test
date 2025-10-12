@@ -5,12 +5,12 @@ using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
 [Route("api/customer")]
-public class APIController : ControllerBase
+public class CustomerController : ControllerBase
 {
     private readonly CustomerServices _customerServices;
 
     // Initialize the CustomerServices with a constructor
-    public APIController(CustomerServices customerServices)
+    public CustomerController(CustomerServices customerServices)
     {
         _customerServices = customerServices;
     }   
@@ -19,7 +19,9 @@ public class APIController : ControllerBase
     [HttpGet]
     public async Task<List<Customer>> Get()
     {
-        return await _customerServices.GetAsyncCustomers();
+        var Customers = await _customerServices.GetAsyncCustomers();
+        Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(Customers));
+        return Customers;
     }
 
     [HttpGet("{id}")]
