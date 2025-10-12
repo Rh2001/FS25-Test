@@ -18,6 +18,11 @@ This project uses:
 -  Custom CSS styling and animations(for now).
 -  Backend powered by **C# / ASP.NET Core** (soon)
 
+---
+
+## Todo
+- TailwindCSS
+- OAuth for logging in.
 
 
 # Start development server
