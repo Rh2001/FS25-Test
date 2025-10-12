@@ -1,0 +1,226 @@
+/* Container */
+.container {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #fff;
+  background-color: #121212;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Navbar */
+.navbar {
+  background-color: #222;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 6px rgba(255 255 0 / 0.3);
+}
+
+.logo {
+  font-size: 2rem;
+  font-weight: 900;
+  color: #facc15; /* yellow */
+  animation: slideDownFadeIn 0.8s ease forwards;
+}
+
+.navbar nav button {
+  background: none;
+  border: none;
+  color: #ccc;
+  margin-left: 1.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: color 0.3s ease, transform 0.3s ease;
+  opacity: 0;
+  animation: fadeIn 1s ease forwards;
+  animation-delay: 0.5s;
+}
+
+.navbar nav button:nth-child(2) {
+  animation-delay: 0.6s;
+}
+
+.navbar nav button:nth-child(3) {
+  animation-delay: 0.7s;
+}
+
+.navbar nav button:hover {
+  color: #facc15;
+  transform: scale(1.1);
+}
+
+
+.hero {
+  position: relative;
+  background: url("https://cdn.cloudflare.steamstatic.com/steam/clusters/sale_dailydeal/ce98cf45b08dbed905ce57a4bd6b451b53103a9f.jpg") center/cover no-repeat;
+  height: 70vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  overflow: hidden;
+}
+
+.hero-overlay {
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 3rem 2rem;
+  border-radius: 12px;
+  max-width: 500px;
+  color: white;
+  animation: slideUpFadeIn 1s ease forwards;
+}
+
+.hero h2 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.hero p {
+  font-size: 1.25rem;
+  margin-bottom: 2rem;
+  color: #ddd;
+  animation: fadeIn 1.5s ease forwards;
+  animation-delay: 0.5s;
+}
+
+/* Buttons */
+.btn-primary {
+  background-color: #facc15;
+  border: none;
+  padding: 0.75rem 2rem;
+  font-weight: 700;
+  color: #000;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: #eab308;
+  transform: scale(1.05);
+}
+
+/* Featured Section */
+.featured-section {
+  padding: 3rem 2rem;
+  background-color: #181818;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.featured-section h3 {
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: #facc15;
+  margin-bottom: 2rem;
+  text-align: center;
+  animation: slideDownFadeIn 1s ease forwards;
+}
+
+/* Games Grid */
+.games-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .games-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Game Card */
+.game-card {
+  background-color: #222;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 6px 15px rgba(250 204 21 / 0.25);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.8s ease forwards;
+  animation-delay: 0.2s;
+}
+
+.game-card:nth-child(2) {
+  animation-delay: 0.4s;
+}
+
+.game-card:nth-child(3) {
+  animation-delay: 0.6s;
+}
+
+.game-card:hover {
+  box-shadow: 0 10px 25px rgba(250 204 21 / 0.5);
+  transform: scale(1.05);
+}
+
+.game-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.game-info {
+  padding: 1rem 1.5rem;
+}
+
+.game-info h4 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.price {
+  font-weight: 700;
+  color: #facc15;
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+/* Footer */
+.footer {
+  background-color: #222;
+  color: #aaa;
+  text-align: center;
+  padding: 1rem 0;
+  margin-top: 3rem;
+  font-size: 0.9rem;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideDownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUpFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
