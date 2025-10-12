@@ -13,13 +13,29 @@ function TestComponent() {
   return (
     <div>
       <h2>Customers</h2>
-      <ul>
-        {customers.map((customer) => (
-          <li key={customer.id || customer._id}>
-            {customer.name}
-          </li>
-        ))}
-      </ul>
+      {customers.length === 0 ? (
+        <p>No customers found.</p>
+      ) : (
+        <table border="1" cellPadding="8" style={{ borderCollapse: "collapse" }}>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              {/* Add more columns as needed */}
+            </tr>
+          </thead>
+          <tbody>
+            {customers.map((customer) => (
+              <tr key={customer.id || customer._id}>
+                <td>{customer.name}</td>
+                <td>{customer.email || "N/A"}</td>
+                {/* Add more fields as needed */}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+     
     </div>
   );
 }
