@@ -14,14 +14,29 @@ public class CustomerServices
         _customersCollection = mongoDb.GetCollection<Customer>(mongoDBSettings.Value.CollectionName);
     }
 
+    // Create a new customer
+    public async Task CreateAsync(Models.Customer newCustomer) =>
+        await _customersCollection.InsertOneAsync(newCustomer);
+
     // Get all customers
     public async Task<List<Customer>> GetAsyncCustomers() =>
         await _customersCollection.Find(_ => true).ToListAsync();
-        
+
 
     // Get a specific customer by ID
     public async Task<Customer?> GetAsync(string id) =>
         await _customersCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
+
+    public async Task<List<Customer>> GetAsyncCustomers(string address) =>
+        await _customersCollection.Find(x => x.Address == address).FirstOrDefaultAsync();
+
+
+    // Update a customer by ID
+
+    public async Task UpdateAsync(string id, Customer updatedCustomer) =>
+        await _customersCollection.ReplaceOneAsync(x => x.Id == id, updatedCustomer);
+        
+    
 
    
 

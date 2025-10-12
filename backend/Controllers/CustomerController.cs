@@ -24,10 +24,12 @@ public class CustomerController : ControllerBase
         return Customers;
     }
 
-    [HttpGet("{id}")]
-    public string Get(int id)
+    [HttpGet]
+    public async Task<List<Customer>> Get(string Id)
     {
-        return "value";
+        var customers = await _customerServices.GetAsyncCustomers(Id);
+        Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(customers));
+        return customers;
     }
 
 }
