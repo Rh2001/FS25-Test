@@ -2,8 +2,6 @@
 
 import React, { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import HomePage from './HomePage';
-import Login from './Login';
 import './index.css';
 import { useEffect } from 'react';
 import AppRoutes from './AppRoutes';

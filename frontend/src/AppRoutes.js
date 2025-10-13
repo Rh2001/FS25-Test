@@ -1,7 +1,7 @@
 // Cleaner routing configuration
 
-import HomePage from "./HomePage";
-import Login from "./Login";
+import HomePage from "./Components/HomePage";
+import Login from "./Components/Login";
 
 const AppRoutes = [
     {
