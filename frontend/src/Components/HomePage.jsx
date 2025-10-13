@@ -2,7 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
-// Game data
+// Game data, this should be fetched from the ASP.NET backend. For now, hardcoded.
 const steamFeaturedGames = [
   {
     id: 1,
@@ -83,7 +83,7 @@ const cardVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
 };
 
-// Section component
+// Section component with tailwind styling
 const Section = ({ title, games }) => (
   <motion.section
     className="max-w-7xl mx-auto px-6 py-16"
@@ -154,13 +154,13 @@ function HomePage(isLoggedIn, setIsLoggedIn) {
             </button>
 
             {/* Check to see if user is logged in, if not show the login button*/}
-            
+            { !isLoggedIn &&
             <button
               onClick={() => navigate("/Login")}
               className="hover:text-yellow-400 transition"
             >
               Login
-            </button>
+            </button>}
             <button className="hover:text-yellow-400 transition">Store</button>
             <button className="hover:text-yellow-400 transition">Contact</button>
           </nav>

@@ -23,7 +23,7 @@ function Login() {
       return;
     }
     
-    sessionStorage.setItem("isLoggedIn", "true");
+    localStorage.setItem("isLoggedIn", "true");
     alert("✅ Login successful!");
     navigate("/");
   };

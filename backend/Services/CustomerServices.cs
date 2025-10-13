@@ -11,7 +11,7 @@ public class CustomerServices
     {
         var mongoClient = new MongoClient(mongoDBSettings.Value.ConnectionString);
         var mongoDb = mongoClient.GetDatabase(mongoDBSettings.Value.DatabaseName);
-        _customersCollection = mongoDb.GetCollection<Customer>(mongoDBSettings.Value.CollectionName);
+        _customersCollection = mongoDb.GetCollection<Customer>(mongoDBSettings.Value.CollectionName.Customer);
     }
 
     // Create a new customer
@@ -27,8 +27,6 @@ public class CustomerServices
     public async Task<Customer?> GetAsync(string id) =>
         await _customersCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
 
-    public async Task<List<Customer>> GetAsyncCustomers(string address) =>
-        await _customersCollection.Find(x => x.Address == address).FirstOrDefaultAsync();
 
 
     // Update a customer by ID

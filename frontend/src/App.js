@@ -8,7 +8,8 @@ import AppRoutes from './AppRoutes';
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    setIsLoggedIn.isLoggedIn = false;
+    localStorage.setItem("isLoggedIn", false);
+    //setIsLoggedIn(localStorage.getItem("isLoggedIn") === "true");
 
  
   return (
