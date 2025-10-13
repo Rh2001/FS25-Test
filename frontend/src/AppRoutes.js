@@ -3,6 +3,8 @@
 import HomePage from "./Components/HomePage";
 import Login from "./Components/Login";
 
+
+// Map routes to components
 const AppRoutes = [
     {
         path: "/",
