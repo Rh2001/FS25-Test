@@ -119,7 +119,7 @@ function StorePage({ isLoggedIn, setIsLoggedIn }) {
       description: "Return to stealth and parkour in historic Baghdad.",
       price: 49.99,
       imageUrl:
-        "https://cdn.cloudflare.steamstatic.com/steam/apps/2208920/header.jpg?t=1728985279",
+        "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3035570/header.jpg?t=1753294133",
     },
     {
       title: "Baldur’s Gate 3",
