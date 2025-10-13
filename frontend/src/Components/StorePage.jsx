@@ -56,7 +56,7 @@ const Section = ({ title, games = [] }) => {
       >
         {games.map((game, idx) => (
           <motion.div
-            key={game.id || idx}
+            key={idx}
             variants={cardVariants}
             whileHover={{ scale: 1.04, rotateY: 3 }}
             transition={{ type: "spring", stiffness: 150, damping: 12 }}
@@ -66,11 +66,8 @@ const Section = ({ title, games = [] }) => {
                        transition-all duration-300 overflow-hidden group"
           >
             <img
-              src={
-                game.imageUrl ||
-                "https://via.placeholder.com/300x150?text=No+Image"
-              }
-              alt={game.title || "Game"}
+              src={game.imageUrl}
+              alt={game.title}
               className="w-full h-52 object-cover group-hover:scale-105 transition-transform duration-500"
             />
             <div className="p-5 text-white">
@@ -80,7 +77,7 @@ const Section = ({ title, games = [] }) => {
               </p>
               <div className="flex justify-between items-center">
                 <p className="text-sky-400 font-semibold text-lg">
-                  ${game.price?.toFixed(2) || "N/A"}
+                  ${game.price.toFixed(2)}
                 </p>
                 <motion.button
                   whileHover={{ scale: 1.05 }}
@@ -100,11 +97,48 @@ const Section = ({ title, games = [] }) => {
   );
 };
 
-function HomePage({ isLoggedIn, setIsLoggedIn }) {
+function StorePage({ isLoggedIn, setIsLoggedIn }) {
   const navigate = useNavigate();
-  const [featuredGames, setFeaturedGames] = useState([]);
+  const [games] = useState([
+    {
+      title: "Cyberpunk 2077",
+      description: "A futuristic open-world RPG set in Night City.",
+      price: 59.99,
+      imageUrl:
+        "https://cdn.cloudflare.steamstatic.com/steam/apps/1091500/header.jpg?t=1729527383",
+    },
+    {
+      title: "Elden Ring",
+      description: "An epic adventure in a dark fantasy world by FromSoftware.",
+      price: 69.99,
+      imageUrl:
+        "https://cdn.cloudflare.steamstatic.com/steam/apps/1245620/header.jpg?t=1729590821",
+    },
+    {
+      title: "Assassin's Creed Mirage",
+      description: "Return to stealth and parkour in historic Baghdad.",
+      price: 49.99,
+      imageUrl:
+        "https://cdn.cloudflare.steamstatic.com/steam/apps/2208920/header.jpg?t=1728985279",
+    },
+    {
+      title: "Baldur’s Gate 3",
+      description:
+        "Gather your party and experience D&D-inspired turn-based RPG gameplay.",
+      price: 59.99,
+      imageUrl:
+        "https://cdn.cloudflare.steamstatic.com/steam/apps/1086940/header.jpg?t=1729714592",
+    },
+    {
+      title: "Call of Duty: Modern Warfare III",
+      description: "Modern combat redefined — high stakes and cinematic action.",
+      price: 39.99,
+      imageUrl:
+        "https://blz-contentstack-images.akamaized.net/v3/assets/bltf408a0557f4e4998/bltd6fa384b60ff3fbd/64cc2fe367e57a3aa2cec653/Jupiter_Coming_Soon-Bnet_Game-Content_UI_(Phoenix)-EN-1920x1080_textless.jpg",
+    },
+  ]);
 
-  // Add and create Lenis smooth scrolling
+  // Smooth scrolling
   useEffect(() => {
     const lenis = new Lenis({
       duration: 1.3,
@@ -123,14 +157,6 @@ function HomePage({ isLoggedIn, setIsLoggedIn }) {
     return () => lenis.destroy();
   }, []);
 
-  // ✅ Fetch games
-  useEffect(() => {
-    fetch("http://localhost:5148/api/featured-games")
-      .then((res) => res.json())
-      .then((data) => setFeaturedGames(data || []))
-      .catch((err) => console.error("Failed to load games:", err));
-  }, []);
-
   return (
     <div
       className="text-white font-sans min-h-screen overflow-x-hidden relative"
@@ -140,7 +166,7 @@ function HomePage({ isLoggedIn, setIsLoggedIn }) {
         animation: "gradientMove 12s ease infinite",
       }}
     >
-      {/* Animated Background Blobs */}
+      {/* Animated Background*/}
       <motion.div
         className="absolute top-10 left-10 w-72 h-72 bg-sky-500/10 blur-3xl rounded-full"
         animate={{ y: [0, 30, 0], x: [0, 15, 0] }}
@@ -152,7 +178,7 @@ function HomePage({ isLoggedIn, setIsLoggedIn }) {
         transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
       />
 
-      {/* Floating Neon Glass Navbar */}
+      {/* Navbar */}
       <header className="fixed w-full z-50 neon-navbar">
         <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
           <motion.h1
@@ -178,7 +204,7 @@ function HomePage({ isLoggedIn, setIsLoggedIn }) {
           <nav className="space-x-6 text-gray-300 font-medium flex items-center">
             <button
               onClick={() => navigate("/")}
-              className="text-sky-400 drop-shadow-[0_0_6px_#38bdf8]"
+              className="hover:text-sky-400 transition hover:drop-shadow-[0_0_6px_#38bdf8]"
             >
               Home
             </button>
@@ -191,8 +217,8 @@ function HomePage({ isLoggedIn, setIsLoggedIn }) {
               </button>
             )}
             <button
-              onClick={() => navigate("/store")}
-              className="hover:text-sky-400 transition hover:drop-shadow-[0_0_6px_#38bdf8]"
+              onClick={() => navigate("/Store")}
+              className="text-sky-400 drop-shadow-[0_0_6px_#38bdf8]"
             >
               Store
             </button>
@@ -205,10 +231,10 @@ function HomePage({ isLoggedIn, setIsLoggedIn }) {
 
       {/* Hero Section */}
       <section
-        className="relative h-[70vh] flex items-center justify-center bg-center bg-cover text-center"
+        className="relative h-[60vh] flex items-center justify-center bg-center bg-cover text-center"
         style={{
           backgroundImage:
-            "url('https://cdn.cloudflare.steamstatic.com/steam/clusters/sale_dailydeal/ce98cf45b08dbed905ce57a4bd6b451b53103a9f.jpg')",
+            "url('https://cdn.cloudflare.steamstatic.com/steam/clusters/sale_main_capsule/00a9de168c1638d35366c19e9f0562a42386c57c.jpg')",
         }}
       >
         <div className="absolute inset-0 bg-gradient-to-b from-[#0b0e14]/40 via-[#0b0e14]/70 to-[#0b0e14]/90" />
@@ -223,24 +249,16 @@ function HomePage({ isLoggedIn, setIsLoggedIn }) {
                          bg-gradient-to-r from-sky-400 to-cyan-500 
                          drop-shadow-[0_0_10px_rgba(56,189,248,0.4)]"
           >
-            💠 Featured Bokhari Deals
+            💎 Explore Our Store
           </h2>
           <p className="text-gray-300 mb-8 text-lg leading-relaxed">
-            Explore the best digital game deals — instant, secure, and built for gamers.
+            Browse the latest game collections with fair prices.
           </p>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="bg-gradient-to-r from-sky-500 to-cyan-500 text-black px-6 py-3 
-                       font-bold rounded-md hover:opacity-90 transition"
-          >
-            Browse Store
-          </motion.button>
         </motion.div>
       </section>
 
-      {/* Dynamic Section */}
-      <Section title="Featured Bokhari Deals" games={featuredGames} />
+      {/* Game Grid */}
+      <Section title="Available Games" games={games} />
 
       {/* Footer */}
       <footer className="bg-[#1a1f29]/90 border-t border-[#2b3240]/50 text-gray-400 
@@ -257,4 +275,4 @@ function HomePage({ isLoggedIn, setIsLoggedIn }) {
   );
 }
 
-export default HomePage;
+export default StorePage;
