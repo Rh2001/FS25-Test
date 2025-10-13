@@ -229,6 +229,7 @@ function HomePage({ isLoggedIn, setIsLoggedIn }) {
             Explore the best digital game deals — instant, secure, and built for gamers.
           </p>
           <motion.button
+            onClick={() => navigate("/store")}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="bg-gradient-to-r from-sky-500 to-cyan-500 text-black px-6 py-3 
