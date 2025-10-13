@@ -15,3 +15,44 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Neon color pulse for navbar, it cycles through different colors and can be changed */
+@keyframes neonGlow {
+  0% {
+    border-color: #38bdf8;
+    box-shadow: 0 0 12px #38bdf8;
+  }
+  25% {
+    border-color: #a855f7;
+    box-shadow: 0 0 12px #a855f7;
+  }
+  50% {
+    border-color: #ec4899;
+    box-shadow: 0 0 12px #ec4899;
+  }
+  75% {
+    border-color: #06b6d4;
+    box-shadow: 0 0 12px #06b6d4;
+  }
+  100% {
+    border-color: #38bdf8;
+    box-shadow: 0 0 12px #38bdf8;
+  }
+}
+
+
+.neon-navbar {
+  background: rgba(11, 14, 20, 0.6);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid #38bdf8;
+  animation: neonGlow 8s linear infinite;
+  transition: all 0.3s ease;
+}
+
+

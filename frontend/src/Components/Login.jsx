@@ -11,7 +11,7 @@ function Login() {
   const handleLogin = (e) => {
     e.preventDefault();
 
-    // Mock validation
+    // Simple validation
     if (!email) {
       setErrorField("email");
       setTimeout(() => setErrorField(""), 800);
@@ -22,7 +22,7 @@ function Login() {
       setTimeout(() => setErrorField(""), 800);
       return;
     }
-    
+
     localStorage.setItem("isLoggedIn", "true");
     alert("✅ Login successful!");
     navigate("/");
@@ -51,21 +51,30 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0b0b0c] text-white font-inter flex flex-col">
+    <div className="min-h-screen bg-[#0b0e14] text-white font-sans flex flex-col">
       {/* Navbar */}
-      <header className="bg-neutral-900/60 backdrop-blur-sm fixed w-full z-40">
+      <header className="bg-[#1a1f29]/90 backdrop-blur-lg border-b border-[#2b3240] fixed w-full z-40">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <h1 className="text-xl md:text-2xl font-extrabold text-yellow-400">
+          <h1
+            onClick={() => navigate("/")}
+            className="text-2xl md:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-cyan-400 cursor-pointer"
+          >
             Bokhar Store
           </h1>
-          <nav className="space-x-4 text-gray-300">
-            <button onClick={() => navigate("/")} className="hover:text-yellow-400">
+          <nav className="space-x-4 text-gray-300 font-medium">
+            <button
+              onClick={() => navigate("/")}
+              className="hover:text-sky-400 transition"
+            >
               Home
             </button>
-            <button onClick={() => navigate("/login")} className="hover:text-yellow-400">
+            <button
+              onClick={() => navigate("/login")}
+              className="hover:text-sky-400 transition"
+            >
               Login
             </button>
-            <button className="hover:text-yellow-400">Store</button>
+            <button className="hover:text-sky-400 transition">Store</button>
           </nav>
         </div>
       </header>
@@ -78,19 +87,19 @@ function Login() {
           animate="visible"
           variants={containerVariants}
         >
-          <motion.div className="bg-neutral-900/80 border border-neutral-800 rounded-2xl shadow-xl backdrop-blur-sm overflow-hidden">
+          <motion.div className="bg-[#1b1f29]/90 border border-[#2c3342] rounded-2xl shadow-xl backdrop-blur-md overflow-hidden">
             <div className="p-8">
               <motion.h2
                 variants={itemVariants}
-                className="text-2xl font-extrabold text-yellow-400 mb-2"
+                className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-cyan-400 mb-2"
               >
                 Login to Your Account
               </motion.h2>
               <motion.p
                 variants={itemVariants}
-                className="text-gray-300 text-sm mb-6"
+                className="text-gray-400 text-sm mb-6"
               >
-                Enter your credentials to access your store dashboard.
+                Access your digital game library and personalized deals.
               </motion.p>
 
               <form onSubmit={handleLogin} className="space-y-4">
@@ -107,7 +116,7 @@ function Login() {
                       : "visible"
                   }
                 >
-                  <label className="block text-xs text-gray-300 mb-1">
+                  <label className="block text-xs text-gray-400 mb-1">
                     Email
                   </label>
                   <motion.input
@@ -117,12 +126,12 @@ function Login() {
                     onChange={(e) => setEmail(e.target.value)}
                     whileFocus={{
                       scale: 1.01,
-                      boxShadow: "0 6px 20px rgba(250,204,21,0.08)",
+                      boxShadow: "0 0 20px rgba(0,191,255,0.15)",
                     }}
-                    className={`w-full bg-[#0f0f10] border ${
+                    className={`w-full bg-[#0f131a] border ${
                       errorField === "email" || errorField === "both"
                         ? "border-red-500 focus:ring-red-500"
-                        : "border-neutral-800 focus:ring-yellow-400"
+                        : "border-[#2b3240] focus:ring-sky-400"
                     } rounded-lg px-3 py-2 text-sm placeholder-gray-500 focus:outline-none focus:ring-2 transition`}
                   />
                 </motion.div>
@@ -140,7 +149,7 @@ function Login() {
                       : "visible"
                   }
                 >
-                  <label className="block text-xs text-gray-300 mb-1">
+                  <label className="block text-xs text-gray-400 mb-1">
                     Password
                   </label>
                   <motion.input
@@ -150,23 +159,23 @@ function Login() {
                     onChange={(e) => setPassword(e.target.value)}
                     whileFocus={{
                       scale: 1.01,
-                      boxShadow: "0 6px 20px rgba(250,204,21,0.08)",
+                      boxShadow: "0 0 20px rgba(0,191,255,0.15)",
                     }}
-                    className={`w-full bg-[#0f0f10] border ${
+                    className={`w-full bg-[#0f131a] border ${
                       errorField === "password" || errorField === "both"
                         ? "border-red-500 focus:ring-red-500"
-                        : "border-neutral-800 focus:ring-yellow-400"
+                        : "border-[#2b3240] focus:ring-cyan-400"
                     } rounded-lg px-3 py-2 text-sm placeholder-gray-500 focus:outline-none focus:ring-2 transition`}
                   />
                 </motion.div>
 
-                {/* Button */}
+                {/* Login Button */}
                 <motion.div variants={itemVariants} className="pt-2">
                   <motion.button
                     type="submit"
                     whileTap={{ scale: 0.97 }}
                     whileHover={{ translateY: -2 }}
-                    className="w-full bg-yellow-400 text-black font-semibold rounded-lg px-4 py-2 shadow-sm hover:bg-yellow-300 transition"
+                    className="w-full bg-gradient-to-r from-sky-500 to-cyan-500 text-black font-semibold rounded-lg px-4 py-2 shadow-md hover:opacity-90 transition"
                   >
                     Login
                   </motion.button>
@@ -174,8 +183,11 @@ function Login() {
               </form>
             </div>
 
-            <div className="bg-neutral-800/60 px-6 py-3 text-sm text-gray-400 text-center">
-              &copy; {new Date().getFullYear()} Bokhar Store — Roham Harandifasih
+            <div className="bg-[#1a1f29]/80 border-t border-[#2b3240] px-6 py-3 text-sm text-gray-500 text-center">
+              &copy; {new Date().getFullYear()} Bokhar Store —{" "}
+              <span className="text-sky-400 font-semibold">
+                Roham Harandifasih
+              </span>
             </div>
           </motion.div>
         </motion.section>

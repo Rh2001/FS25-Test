@@ -1,25 +1,30 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import Lenis from "@studio-freight/lenis";
 
 // Animation variants
 const sectionVariants = {
   hidden: { opacity: 0, y: 40 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: "easeOut" },
+  },
 };
 
 const containerVariants = {
   hidden: {},
-  visible: {
-    transition: {
-      staggerChildren: 0.15,
-    },
-  },
+  visible: { transition: { staggerChildren: 0.15 } },
 };
 
 const cardVariants = {
   hidden: { opacity: 0, y: 50 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: "easeOut" },
+  },
 };
 
 // Section component
@@ -28,7 +33,7 @@ const Section = ({ title, games = [] }) => {
 
   return (
     <motion.section
-      className="max-w-7xl mx-auto px-6 py-16"
+      className="max-w-7xl mx-auto px-6 py-20 relative z-10"
       variants={sectionVariants}
       initial="hidden"
       animate="visible"
@@ -37,7 +42,8 @@ const Section = ({ title, games = [] }) => {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="text-3xl md:text-4xl font-extrabold text-yellow-400 mb-10 text-center"
+        className="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text 
+                   bg-gradient-to-r from-sky-400 to-cyan-500 mb-12 text-center"
       >
         {title}
       </motion.h3>
@@ -46,28 +52,46 @@ const Section = ({ title, games = [] }) => {
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="grid grid-cols-1 md:grid-cols-3 gap-8"
+        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10"
       >
         {games.map((game, idx) => (
           <motion.div
             key={game.id || idx}
             variants={cardVariants}
-            className="bg-neutral-900 rounded-2xl shadow-lg hover:shadow-yellow-500/30 hover:scale-[1.03] transition-all overflow-hidden"
+            whileHover={{ scale: 1.04, rotateY: 3 }}
+            transition={{ type: "spring", stiffness: 150, damping: 12 }}
+            className="bg-[#111827]/70 backdrop-blur-lg border border-[#2c3342] 
+                       rounded-2xl shadow-lg shadow-sky-500/5 
+                       hover:border-sky-500/40 hover:shadow-sky-500/20 
+                       transition-all duration-300 overflow-hidden group"
           >
             <img
-              src={game.imageUrl || "https://via.placeholder.com/300x150?text=No+Image"}
+              src={
+                game.imageUrl ||
+                "https://via.placeholder.com/300x150?text=No+Image"
+              }
               alt={game.title || "Game"}
-              className="w-full h-48 object-cover"
+              className="w-full h-52 object-cover group-hover:scale-105 transition-transform duration-500"
             />
             <div className="p-5 text-white">
-              <h4 className="text-xl font-semibold mb-2">{game.title}</h4>
-              <p className="text-gray-400 text-sm mb-3">{game.description}</p>
-              <p className="text-yellow-400 font-bold text-lg mb-3">
-                ${game.price?.toFixed(2) || "N/A"}
+              <h4 className="text-lg font-semibold mb-1">{game.title}</h4>
+              <p className="text-gray-400 text-sm mb-3 line-clamp-2">
+                {game.description}
               </p>
-              <button className="bg-yellow-400 text-black font-bold px-4 py-2 rounded-lg hover:bg-yellow-300 transition">
-                Buy Now
-              </button>
+              <div className="flex justify-between items-center">
+                <p className="text-sky-400 font-semibold text-lg">
+                  ${game.price?.toFixed(2) || "N/A"}
+                </p>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="bg-gradient-to-r from-sky-500 to-cyan-500 text-black 
+                             font-semibold px-4 py-2 rounded-md shadow-sm 
+                             hover:shadow-sky-500/30 transition"
+                >
+                  Buy Now
+                </motion.button>
+              </div>
             </div>
           </motion.div>
         ))}
@@ -80,42 +104,98 @@ function HomePage({ isLoggedIn, setIsLoggedIn }) {
   const navigate = useNavigate();
   const [featuredGames, setFeaturedGames] = useState([]);
 
-  // Fetch from ASP.NET backend
+  // Add and create Lenis smooth scrolling
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.3,
+      smoothWheel: true,
+      smoothTouch: false,
+      wheelMultiplier: 1.1,
+      lerp: 0.1,
+    });
+
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+
+    requestAnimationFrame(raf);
+    return () => lenis.destroy();
+  }, []);
+
+  // ✅ Fetch games
   useEffect(() => {
     fetch("http://localhost:5148/api/featured-games")
       .then((res) => res.json())
-      .then((data) => {
-        console.log("Fetched games:", data);
-        setFeaturedGames(data || []);
-      })
-      .catch((err) => console.error("Failed to load games:", err)); // Error handling
+      .then((data) => setFeaturedGames(data || []))
+      .catch((err) => console.error("Failed to load games:", err));
   }, []);
 
   return (
-    <div className="bg-[#121212] text-white font-sans min-h-screen overflow-x-hidden">
-      {/* Navbar */}
-      <header className="bg-neutral-900/90 backdrop-blur-md shadow-lg fixed w-full z-50">
+    <div
+      className="text-white font-sans min-h-screen overflow-x-hidden relative"
+      style={{
+        background: "linear-gradient(120deg, #0b0e14, #111827, #0b0e14)",
+        backgroundSize: "300% 300%",
+        animation: "gradientMove 12s ease infinite",
+      }}
+    >
+      {/* Animated Background Blobs */}
+      <motion.div
+        className="absolute top-10 left-10 w-72 h-72 bg-sky-500/10 blur-3xl rounded-full"
+        animate={{ y: [0, 30, 0], x: [0, 15, 0] }}
+        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div
+        className="absolute bottom-10 right-10 w-80 h-80 bg-cyan-500/10 blur-3xl rounded-full"
+        animate={{ y: [0, -20, 0], x: [0, -10, 0] }}
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+      />
+
+      {/* Floating Neon Glass Navbar */}
+      <header className="fixed w-full z-50 neon-navbar">
         <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
-          <h1 className="text-2xl md:text-3xl font-extrabold text-yellow-400">
+          <motion.h1
+            onClick={() => navigate("/Home")}
+            initial={{ textShadow: "0 0 8px rgba(56,189,248,0.8)" }}
+            animate={{
+              textShadow: [
+                "0 0 8px rgba(56,189,248,0.8)",
+                "0 0 18px rgba(56,189,248,1)",
+                "0 0 8px rgba(56,189,248,0.8)",
+              ],
+            }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            className="text-2xl md:text-3xl font-extrabold text-transparent bg-clip-text 
+                       bg-gradient-to-r from-sky-400 via-cyan-400 to-sky-500 cursor-pointer 
+                       drop-shadow-[0_0_10px_rgba(56,189,248,0.5)] 
+                       hover:drop-shadow-[0_0_18px_rgba(56,189,248,0.9)] 
+                       transition-all duration-300"
+          >
             Bokhar Store
-          </h1>
-          <nav className="space-x-6 text-gray-300 font-medium">
+          </motion.h1>
+
+          <nav className="space-x-6 text-gray-300 font-medium flex items-center">
             <button
               onClick={() => navigate("/Home")}
-              className="hover:text-yellow-400 transition"
+              className="hover:text-sky-400 transition hover:drop-shadow-[0_0_6px_#38bdf8]"
             >
               Home
             </button>
             {!isLoggedIn && (
               <button
                 onClick={() => navigate("/Login")}
-                className="hover:text-yellow-400 transition"
-          >
+                className="hover:text-sky-400 transition hover:drop-shadow-[0_0_6px_#38bdf8]"
+              >
                 Login
               </button>
             )}
-            <button className="hover:text-yellow-400 transition">Store</button>
-            <button className="hover:text-yellow-400 transition">Contact</button>
+            <button className="hover:text-sky-400 transition hover:drop-shadow-[0_0_6px_#38bdf8]">
+              Store
+            </button>
+            <button className="hover:text-sky-400 transition hover:drop-shadow-[0_0_6px_#38bdf8]">
+              Contact
+            </button>
           </nav>
         </div>
       </header>
@@ -128,31 +208,47 @@ function HomePage({ isLoggedIn, setIsLoggedIn }) {
             "url('https://cdn.cloudflare.steamstatic.com/steam/clusters/sale_dailydeal/ce98cf45b08dbed905ce57a4bd6b451b53103a9f.jpg')",
         }}
       >
-        <div className="absolute inset-0 bg-black/70" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0b0e14]/40 via-[#0b0e14]/70 to-[#0b0e14]/90" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(56,189,248,0.15),transparent_70%)]" />
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.2, ease: "easeOut" }}
           className="relative z-10 max-w-xl px-6"
         >
-          <h2 className="text-4xl md:text-5xl font-extrabold mb-4 text-yellow-400">
-            🔥 Featured Bokhari deals
+          <h2 className="text-4xl md:text-5xl font-extrabold mb-5 text-transparent bg-clip-text 
+                         bg-gradient-to-r from-sky-400 to-cyan-500 
+                         drop-shadow-[0_0_10px_rgba(56,189,248,0.4)]"
+          >
+            💠 Featured Bokhari Deals
           </h2>
-          <p className="text-gray-200 mb-6 text-lg">
-            Discover the best digital deals from Bokhar Store. Secure. Instant. Affordable.
+          <p className="text-gray-300 mb-8 text-lg leading-relaxed">
+            Explore the best digital game deals — instant, secure, and built for gamers.
           </p>
-          <button className="bg-yellow-400 text-black px-6 py-3 font-bold rounded-lg hover:bg-yellow-300 transition">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="bg-gradient-to-r from-sky-500 to-cyan-500 text-black px-6 py-3 
+                       font-bold rounded-md hover:opacity-90 transition"
+          >
             Browse Store
-          </button>
+          </motion.button>
         </motion.div>
       </section>
 
-      {/* Dynamic Section from backend */}
+      {/* Dynamic Section */}
       <Section title="Featured Bokhari Deals" games={featuredGames} />
 
       {/* Footer */}
-      <footer className="bg-neutral-900 text-gray-400 text-center py-6 mt-20">
-        &copy; {new Date().getFullYear()} Bokhar Store — Created by Roham Harandifasih
+      <footer className="bg-[#1a1f29]/90 border-t border-[#2b3240]/50 text-gray-400 
+                         text-center py-8 mt-20 relative z-10 backdrop-blur-md"
+      >
+        <p>
+          &copy; {new Date().getFullYear()} Bokhar Store —{" "}
+          <span className="text-sky-400 font-semibold">
+            Created by Roham Harandifasih
+          </span>
+        </p>
       </footer>
     </div>
   );
