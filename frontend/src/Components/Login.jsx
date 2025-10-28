@@ -185,9 +185,13 @@ function Login() {
 
             <div className="bg-[#1a1f29]/80 border-t border-[#2b3240] px-6 py-3 text-sm text-gray-500 text-center">
               &copy; {new Date().getFullYear()} Bokhar Store —{" "}
-              <span className="text-sky-400 font-semibold">
-                Roham Harandifasih
-              </span>
+                       <a
+           href="https://www.linkedin.com/in/roham-h-fasih/"
+           target="_blank"
+           rel="noopener noreferrer"
+           className="text-sky-400 font-semibold hover:underline hover:text-sky-300 transition-colors duration-300">
+           Created by Roham Harandifasih
+        </a>
             </div>
           </motion.div>
         </motion.section>

@@ -13,5 +13,7 @@ namespace TestApp.Models
     {
         public string Customer { get; set; } = null!;
         public string FeaturedGames { get; set; } = null!;
+
+        public string StoreGames { get; set; } = null!;
     } 
 }

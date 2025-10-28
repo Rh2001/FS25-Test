@@ -296,9 +296,13 @@ function StorePage({ isLoggedIn, setIsLoggedIn }) {
       >
         <p>
           &copy; {new Date().getFullYear()} Bokhar Store —{" "}
-          <span className="text-sky-400 font-semibold">
-            Created by Roham Harandifasih
-          </span>
+                   <a
+           href="https://www.linkedin.com/in/roham-h-fasih/"
+           target="_blank"
+           rel="noopener noreferrer"
+           className="text-sky-400 font-semibold hover:underline hover:text-sky-300 transition-colors duration-300">
+           Created by Roham Harandifasih
+        </a>
         </p>
       </footer>
     </div>
