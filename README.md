@@ -15,13 +15,13 @@ A modern digital game store built with **React** on the frontend and **C# (ASP.N
 
 This project uses:
 -  **React** (with React Router)
--  Custom CSS styling and animations(for now).
+-  CSS Styling using TailwindCSS, framermotion and lenis.
 -  Backend powered by **C# / ASP.NET Core** (soon)
 
 ---
 
 ## Todo
-- TailwindCSS
+
 - OAuth for logging in.
 
 
