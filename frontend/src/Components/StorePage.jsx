@@ -34,16 +34,20 @@ const useStoreGames = () => {
   useEffect(() => {
     const loadGames = async () => {
       try {
-        const res = await fetch("http://localhost:5148/api/featured-games");    // This is not the correct endpoint for store games, replace later.
+        const res = await fetch("https://localhost:443/api/featured-games");  //NOT AN ACTUAL ENDPOINT, REPLACE ONCE BACKEND IS DONE
+        if (!res.ok) throw new Error(`HTTP error: ${res.status}`);
         const data = await res.json();
         setGames(data || []);
       } catch (error) {
-        console.error("Couldn't load store games:", error);
+        console.error("Couldn't load featured games:", error);
       }
     };
 
     loadGames();
-  }, []);}
+  }, []);
+
+  return games;
+};
 
   const useCreateLenis = () => {
     useEffect(() => {

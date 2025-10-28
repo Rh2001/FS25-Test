@@ -24,6 +24,7 @@ builder.Services.AddControllers();
 
 var app = builder.Build();
 app.UseCors("AllowReactApp");
+app.UseHttpsRedirection(); // Enforce HTTPS in the backend.
 app.MapControllers();
 app.Run();
 

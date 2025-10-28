@@ -34,7 +34,7 @@ const useFeaturedGames = () => {
   useEffect(() => {
     const loadGames = async () => {
       try {
-        const res = await fetch("http://localhost:5148/api/featured-games");
+        const res = await fetch("https://localhost:443/api/featured-games");  // Updated to HTTPS
         const data = await res.json();
         setGames(data || []);
       } catch (error) {
