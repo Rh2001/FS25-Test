@@ -3,13 +3,13 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import Lenis from "@studio-freight/lenis";
 
-// Animation variants
+// Animation variants for section
 const sectionVariants = {
-  hidden: { opacity: 0, y: 40 },
+  hidden: { opacity: 0, y: 35},
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.6, ease: "easeOut" },
+    transition: { duration: 0.3, ease: "easeOut" },
   },
 };
 
@@ -18,7 +18,7 @@ const containerVariants = {
   visible: { transition: { staggerChildren: 0.15 } },
 };
 
-const cardVariants = {
+const gameCardVariants = {
   hidden: { opacity: 0, y: 50 },
   visible: {
     opacity: 1,
@@ -27,10 +27,52 @@ const cardVariants = {
   },
 };
 
-// Section component
-const Section = ({ title, games = [] }) => {
-  if (!games.length) return null;
+// Custom hook to fetch featured games
+const useFeaturedGames = () => {
+  const [games, setGames] = useState([]);
 
+  useEffect(() => {
+    const loadGames = async () => {
+      try {
+        const res = await fetch("http://localhost:5148/api/featured-games");
+        const data = await res.json();
+        setGames(data || []);
+      } catch (error) {
+        console.error("Couldn't load featured games:", error);
+      }
+    };
+
+    loadGames();
+  }, []);
+
+  return games;
+};
+
+  // Custom hook to create Lenis instance
+  const useCreateLenis = () => {
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.3,
+      smoothWheel: true,
+      smoothTouch: false,
+      wheelMultiplier: 1.1,
+      lerp: 0.1,
+    });
+
+    const raf = (time) => {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    };
+
+    requestAnimationFrame(raf);
+
+    return () => lenis.destroy(); // ✅ cleanup
+  }, []);
+};
+// Section component
+const GamesHolder = ({ title, games = [] }) => {
+  if (!games.length) return null;
+  else{
   return (
     <motion.section
       className="max-w-7xl mx-auto px-6 py-20 relative z-10"
@@ -39,9 +81,9 @@ const Section = ({ title, games = [] }) => {
       animate="visible"
     >
       <motion.h3
-        initial={{ opacity: 0, y: -20 }}
+        initial={{ opacity: 0, y: -22 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
         className="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text 
                    bg-gradient-to-r from-sky-400 to-cyan-500 mb-12 text-center"
       >
@@ -57,9 +99,10 @@ const Section = ({ title, games = [] }) => {
         {games.map((game, idx) => (
           <motion.div
             key={game.id || idx}
-            variants={cardVariants}
-            whileHover={{ scale: 1.04, rotateY: 3 }}
-            transition={{ type: "spring", stiffness: 150, damping: 12 }}
+            variants={gameCardVariants}
+            initial="false"   // Bug fix for hovering twice issue, finally found it.
+            whileHover={{ scale: 1.09, rotateY: 2 }}  // This will change the scale of the game cards.
+            transition={{ type: "spring", stiffness: 0, damping: 10 }}
             className="bg-[#111827]/70 backdrop-blur-lg border border-[#2c3342] 
                        rounded-2xl shadow-lg shadow-sky-500/5 
                        hover:border-sky-500/40 hover:shadow-sky-500/20 
@@ -68,7 +111,7 @@ const Section = ({ title, games = [] }) => {
             <img
               src={
                 game.imageUrl ||
-                "https://via.placeholder.com/300x150?text=No+Image"
+                "this is not an image, it will not be used"
               }
               alt={game.title || "Game"}
               className="w-full h-52 object-cover group-hover:scale-105 transition-transform duration-500"
@@ -98,45 +141,21 @@ const Section = ({ title, games = [] }) => {
       </motion.div>
     </motion.section>
   );
-};
+}};
 
 function HomePage({ isLoggedIn, setIsLoggedIn }) {
   const navigate = useNavigate();
-  const [featuredGames, setFeaturedGames] = useState([]);
+  const featuredGames = useFeaturedGames();
+  useCreateLenis();
 
-  // Add and create Lenis smooth scrolling
-  useEffect(() => {
-    const lenis = new Lenis({
-      duration: 1.3,
-      smoothWheel: true,
-      smoothTouch: false,
-      wheelMultiplier: 1.1,
-      lerp: 0.1,
-    });
-
-    function raf(time) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-
-    requestAnimationFrame(raf);
-    return () => lenis.destroy();
-  }, []);
-
-  // ✅ Fetch games
-  useEffect(() => {
-    fetch("http://localhost:5148/api/featured-games")
-      .then((res) => res.json())
-      .then((data) => setFeaturedGames(data || []))
-      .catch((err) => console.error("Failed to load games:", err));
-  }, []);
+ 
 
   return (
     <div
       className="text-white font-sans min-h-screen overflow-x-hidden relative"
       style={{
         background: "linear-gradient(120deg, #0b0e14, #111827, #0b0e14)",
-        backgroundSize: "300% 300%",
+        backgroundSize: "250% 250%",
         animation: "gradientMove 12s ease infinite",
       }}
     >
@@ -241,7 +260,7 @@ function HomePage({ isLoggedIn, setIsLoggedIn }) {
       </section>
 
       {/* Dynamic Section */}
-      <Section title="Featured Bokhari Deals" games={featuredGames} />
+      <GamesHolder title="Featured Bokhari Deals" games={featuredGames} />
 
       {/* Footer */}
       <footer className="bg-[#1a1f29]/90 border-t border-[#2b3240]/50 text-gray-400 
