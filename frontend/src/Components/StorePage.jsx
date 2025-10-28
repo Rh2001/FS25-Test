@@ -18,7 +18,7 @@ const containerVariants = {
   visible: { transition: { staggerChildren: 0.15 } },
 };
 
-const cardVariants = {
+const gameCardVariants = {
   hidden: { opacity: 0, y: 50 },
   visible: {
     opacity: 1,
@@ -26,6 +26,45 @@ const cardVariants = {
     transition: { duration: 0.5, ease: "easeOut" },
   },
 };
+
+// Custom hook to fetch store games
+const useStoreGames = () => {
+  const [games, setGames] = useState([]);
+
+  useEffect(() => {
+    const loadGames = async () => {
+      try {
+        const res = await fetch("http://localhost:5148/api/featured-games");    // This is not the correct endpoint for store games, replace later.
+        const data = await res.json();
+        setGames(data || []);
+      } catch (error) {
+        console.error("Couldn't load store games:", error);
+      }
+    };
+
+    loadGames();
+  }, []);}
+
+  const useCreateLenis = () => {
+    useEffect(() => {
+      const lenis = new Lenis({
+        duration: 1.3,
+        smoothWheel: true,
+        smoothTouch: false,
+        wheelMultiplier: 1.1,
+        lerp: 0.1,
+      });
+  
+      const raf = (time) => {
+        lenis.raf(time);
+        requestAnimationFrame(raf);
+      };
+  
+      requestAnimationFrame(raf);
+  
+      return () => lenis.destroy(); 
+    }, []);
+  };
 
 // Section component
 const Section = ({ title, games = [] }) => {
@@ -57,9 +96,10 @@ const Section = ({ title, games = [] }) => {
         {games.map((game, idx) => (
           <motion.div
             key={idx}
-            variants={cardVariants}
+            variants={gameCardVariants}
+            initial = "false"   // Bug fix for hovering twice issue, finally found it x 2, first time was in homepage :D.
             whileHover={{ scale: 1.04, rotateY: 3 }}
-            transition={{ type: "spring", stiffness: 150, damping: 12 }}
+            transition={{ type: "spring", stiffness: 0, damping: 10 }}
             className="bg-[#111827]/70 backdrop-blur-lg border border-[#2c3342] 
                        rounded-2xl shadow-lg shadow-sky-500/5 
                        hover:border-sky-500/40 hover:shadow-sky-500/20 
@@ -138,24 +178,10 @@ function StorePage({ isLoggedIn, setIsLoggedIn }) {
     },
   ]);
 
-  // Smooth scrolling
-  useEffect(() => {
-    const lenis = new Lenis({
-      duration: 1.3,
-      smoothWheel: true,
-      smoothTouch: false,
-      wheelMultiplier: 1.1,
-      lerp: 0.1,
-    });
+  const storeGames = useStoreGames();
+  useCreateLenis();
 
-    function raf(time) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-
-    requestAnimationFrame(raf);
-    return () => lenis.destroy();
-  }, []);
+  
 
   return (
     <div

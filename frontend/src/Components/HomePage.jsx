@@ -66,7 +66,7 @@ const useFeaturedGames = () => {
 
     requestAnimationFrame(raf);
 
-    return () => lenis.destroy(); // ✅ cleanup
+    return () => lenis.destroy(); 
   }, []);
 };
 // Section component
