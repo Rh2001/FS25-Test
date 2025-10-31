@@ -1,5 +1,5 @@
 // Animation variants for section
-const sectionVariants = {
+export const sectionVariants = {
   hidden: { opacity: 0, y: 35},
   visible: {
     opacity: 1,
@@ -8,12 +8,12 @@ const sectionVariants = {
   },
 };
 
-const containerVariants = {
+export const containerVariants = {
   hidden: {},
   visible: { transition: { staggerChildren: 0.15 } },
 };
 
-const gameCardVariants = {
+export const gameCardVariants = {
   hidden: { opacity: 0, y: 50 },
   visible: {
     opacity: 1,
