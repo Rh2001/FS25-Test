@@ -52,32 +52,7 @@ function Login() {
 
   return (
     <div className="min-h-screen bg-[#0b0e14] text-white font-sans flex flex-col">
-      {/* Navbar */}
-      <header className="bg-[#1a1f29]/90 backdrop-blur-lg border-b border-[#2b3240] fixed w-full z-40">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <h1
-            onClick={() => navigate("/")}
-            className="text-2xl md:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-cyan-400 cursor-pointer"
-          >
-            Bokhar Store
-          </h1>
-          <nav className="space-x-4 text-gray-300 font-medium">
-            <button
-              onClick={() => navigate("/")}
-              className="hover:text-sky-400 transition"
-            >
-              Home
-            </button>
-            <button
-              onClick={() => navigate("/login")}
-              className="hover:text-sky-400 transition"
-            >
-              Login
-            </button>
-            <button className="hover:text-sky-400 transition">Store</button>
-          </nav>
-        </div>
-      </header>
+      
 
       {/* Login content */}
       <main className="flex-1 flex items-center justify-center pt-24 pb-12">

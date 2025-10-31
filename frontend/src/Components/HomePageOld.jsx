@@ -3,13 +3,13 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import Lenis from "@studio-freight/lenis";
 
-// Animation variants
+// Animation variants for section
 const sectionVariants = {
-  hidden: { opacity: 0, y: 40 },
+  hidden: { opacity: 0, y: 35},
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.6, ease: "easeOut" },
+    transition: { duration: 0.3, ease: "easeOut" },
   },
 };
 
@@ -27,15 +27,14 @@ const gameCardVariants = {
   },
 };
 
-// Custom hook to fetch store games
-const useStoreGames = () => {
+// Custom hook to fetch featured games
+const useFeaturedGames = () => {
   const [games, setGames] = useState([]);
 
   useEffect(() => {
     const loadGames = async () => {
       try {
-        const res = await fetch("https://localhost:443/api/featured-games");  //NOT AN ACTUAL ENDPOINT, REPLACE ONCE BACKEND IS DONE
-        if (!res.ok) throw new Error(`HTTP error: ${res.status}`);
+        const res = await fetch("https://localhost:443/api/featured-games");  // Updated to HTTPS
         const data = await res.json();
         setGames(data || []);
       } catch (error) {
@@ -49,31 +48,31 @@ const useStoreGames = () => {
   return games;
 };
 
+  // Custom hook to create Lenis instance
   const useCreateLenis = () => {
-    useEffect(() => {
-      const lenis = new Lenis({
-        duration: 1.3,
-        smoothWheel: true,
-        smoothTouch: false,
-        wheelMultiplier: 1.1,
-        lerp: 0.1,
-      });
-  
-      const raf = (time) => {
-        lenis.raf(time);
-        requestAnimationFrame(raf);
-      };
-  
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.3,
+      smoothWheel: true,
+      smoothTouch: false,
+      wheelMultiplier: 1.1,
+      lerp: 0.1,
+    });
+
+    const raf = (time) => {
+      lenis.raf(time);
       requestAnimationFrame(raf);
-  
-      return () => lenis.destroy(); 
-    }, []);
-  };
+    };
 
+    requestAnimationFrame(raf);
+
+    return () => lenis.destroy(); 
+  }, []);
+};
 // Section component
-const Section = ({ title, games = [] }) => {
+const GamesHolder = ({ title, games = [] }) => {
   if (!games.length) return null;
-
+  else{
   return (
     <motion.section
       className="max-w-7xl mx-auto px-6 py-20 relative z-10"
@@ -82,9 +81,9 @@ const Section = ({ title, games = [] }) => {
       animate="visible"
     >
       <motion.h3
-        initial={{ opacity: 0, y: -20 }}
+        initial={{ opacity: 0, y: -22 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
         className="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text 
                    bg-gradient-to-r from-sky-400 to-cyan-500 mb-12 text-center"
       >
@@ -99,10 +98,10 @@ const Section = ({ title, games = [] }) => {
       >
         {games.map((game, idx) => (
           <motion.div
-            key={idx}
+            key={game.id || idx}
             variants={gameCardVariants}
-            initial = "false"   // Bug fix for hovering twice issue, finally found it x 2, first time was in homepage :D.
-            whileHover={{ scale: 1.04, rotateY: 3 }}
+            initial="false"   // Bug fix for hovering twice issue, finally found it.
+            whileHover={{ scale: 1.09, rotateY: 2 }}  // This will change the scale of the game cards.
             transition={{ type: "spring", stiffness: 0, damping: 10 }}
             className="bg-[#111827]/70 backdrop-blur-lg border border-[#2c3342] 
                        rounded-2xl shadow-lg shadow-sky-500/5 
@@ -110,8 +109,11 @@ const Section = ({ title, games = [] }) => {
                        transition-all duration-300 overflow-hidden group"
           >
             <img
-              src={game.imageUrl}
-              alt={game.title}
+              src={
+                game.imageUrl ||
+                "this is not an image, it will not be used"
+              }
+              alt={game.title || "Game"}
               className="w-full h-52 object-cover group-hover:scale-105 transition-transform duration-500"
             />
             <div className="p-5 text-white">
@@ -121,7 +123,7 @@ const Section = ({ title, games = [] }) => {
               </p>
               <div className="flex justify-between items-center">
                 <p className="text-sky-400 font-semibold text-lg">
-                  ${game.price.toFixed(2)}
+                  ${game.price?.toFixed(2) || "N/A"}
                 </p>
                 <motion.button
                   whileHover={{ scale: 1.05 }}
@@ -139,64 +141,24 @@ const Section = ({ title, games = [] }) => {
       </motion.div>
     </motion.section>
   );
-};
+}};
 
-function StorePage({ isLoggedIn, setIsLoggedIn }) {
+function HomePage({ isLoggedIn, setIsLoggedIn }) {
   const navigate = useNavigate();
-  const [games] = useState([
-    {
-      title: "Cyberpunk 2077",
-      description: "A futuristic open-world RPG set in Night City.",
-      price: 59.99,
-      imageUrl:
-        "https://cdn.cloudflare.steamstatic.com/steam/apps/1091500/header.jpg?t=1729527383",
-    },
-    {
-      title: "Elden Ring",
-      description: "An epic adventure in a dark fantasy world by FromSoftware.",
-      price: 69.99,
-      imageUrl:
-        "https://cdn.cloudflare.steamstatic.com/steam/apps/1245620/header.jpg?t=1729590821",
-    },
-    {
-      title: "Assassin's Creed Mirage",
-      description: "Return to stealth and parkour in historic Baghdad.",
-      price: 49.99,
-      imageUrl:
-        "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3035570/header.jpg?t=1753294133",
-    },
-    {
-      title: "Baldur’s Gate 3",
-      description:
-        "Gather your party and experience D&D-inspired turn-based RPG gameplay.",
-      price: 59.99,
-      imageUrl:
-        "https://cdn.cloudflare.steamstatic.com/steam/apps/1086940/header.jpg?t=1729714592",
-    },
-    {
-      title: "Call of Duty: Modern Warfare III",
-      description: "Modern combat redefined — high stakes and cinematic action.",
-      price: 39.99,
-      imageUrl:
-        "https://blz-contentstack-images.akamaized.net/v3/assets/bltf408a0557f4e4998/bltd6fa384b60ff3fbd/64cc2fe367e57a3aa2cec653/Jupiter_Coming_Soon-Bnet_Game-Content_UI_(Phoenix)-EN-1920x1080_textless.jpg",
-    },
-  ]);
-
-  const storeGames = useStoreGames();
+  const featuredGames = useFeaturedGames();
   useCreateLenis();
 
-  
 
   return (
     <div
       className="text-white font-sans min-h-screen overflow-x-hidden relative"
       style={{
         background: "linear-gradient(120deg, #0b0e14, #111827, #0b0e14)",
-        backgroundSize: "300% 300%",
+        backgroundSize: "250% 250%",
         animation: "gradientMove 12s ease infinite",
       }}
     >
-      {/* Animated Background*/}
+      {/* Animated Background Blobs */}
       <motion.div
         className="absolute top-10 left-10 w-72 h-72 bg-sky-500/10 blur-3xl rounded-full"
         animate={{ y: [0, 30, 0], x: [0, 15, 0] }}
@@ -208,13 +170,14 @@ function StorePage({ isLoggedIn, setIsLoggedIn }) {
         transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
       />
 
+      
 
       {/* Hero Section */}
       <section
-        className="relative h-[60vh] flex items-center justify-center bg-center bg-cover text-center"
+        className="relative h-[70vh] flex items-center justify-center bg-center bg-cover text-center"
         style={{
           backgroundImage:
-            "url('https://cdn.cloudflare.steamstatic.com/steam/clusters/sale_main_capsule/00a9de168c1638d35366c19e9f0562a42386c57c.jpg')",
+            "url('https://cdn.cloudflare.steamstatic.com/steam/clusters/sale_dailydeal/ce98cf45b08dbed905ce57a4bd6b451b53103a9f.jpg')",
         }}
       >
         <div className="absolute inset-0 bg-gradient-to-b from-[#0b0e14]/40 via-[#0b0e14]/70 to-[#0b0e14]/90" />
@@ -229,34 +192,27 @@ function StorePage({ isLoggedIn, setIsLoggedIn }) {
                          bg-gradient-to-r from-sky-400 to-cyan-500 
                          drop-shadow-[0_0_10px_rgba(56,189,248,0.4)]"
           >
-            💎 Explore Our Store
+            💠 Featured Bokhari Deals
           </h2>
           <p className="text-gray-300 mb-8 text-lg leading-relaxed">
-            Browse the latest game collections with fair prices.
+            Explore the best digital game deals — instant, secure, and built for gamers.
           </p>
+          <motion.button
+            onClick={() => navigate("/store")}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="bg-gradient-to-r from-sky-500 to-cyan-500 text-black px-6 py-3 
+                       font-bold rounded-md hover:opacity-90 transition"
+          >
+            Browse Store
+          </motion.button>
         </motion.div>
       </section>
 
-      {/* Game Grid */}
-      <Section title="Available Games" games={games} />
-
-      {/* Footer */}
-      <footer className="bg-[#1a1f29]/90 border-t border-[#2b3240]/50 text-gray-400 
-                         text-center py-8 mt-20 relative z-10 backdrop-blur-md"
-      >
-        <p>
-          &copy; {new Date().getFullYear()} Bokhar Store —{" "}
-                   <a
-           href="https://www.linkedin.com/in/roham-h-fasih/"
-           target="_blank"
-           rel="noopener noreferrer"
-           className="text-sky-400 font-semibold hover:underline hover:text-sky-300 transition-colors duration-300">
-           Created by Roham Harandifasih
-        </a>
-        </p>
-      </footer>
+      {/* Dynamic Section */}
+      <GamesHolder title="Featured Bokhari Deals" games={featuredGames} />  
     </div>
   );
 }
 
-export default StorePage;
+export default HomePage;
