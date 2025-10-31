@@ -1,63 +1,71 @@
+// The following code implements a carousel component for displaying featured games on the homepage. It includes auto-scrolling functionality, touch/swipe support, and navigation controls.
+// The upper half is the logic behind the scroll while the lower half is the rendering code. As the code is long, the comments only cover the scrolling logic parts and not the rendering code.
+// By Roham Harandifasih
+
 import React, { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { sectionVariants } from "../GlobalFunctions/Variants"; 
 
-
 const GamesHolder = ({ title = "Featured", games = [] }) => {
   const [currentIndex, setCurrentIndex] = useState(0); // Current slide index
   const [isPaused, setIsPaused] = useState(false); // To control auto-scroll pausing
-  const intervalRef = useRef(null);
+  const timeoutRef = useRef(null);
 
-  // Touch/swipe tracking
+  // Touch/swipe tracking for mobile devices(You will not see this in action but its good to have here for future proofing)
   const touchStartX = useRef(null);
   const touchDeltaX = useRef(0);
-  let Duration = 3; // Duration of scroll, you can set it as seconds here, it will automatically turn it into milliseconds
 
-  // Check to see if games list changed and reset index if needed
+  // Autoplay interval in milliseconds (change this to adjust timing of auto-scroll, make sure its in milliseconds or it will be doomed(speaking of experience))
+  const Duration = 3000;
+
+  // Ensure index stays valid when games change
   useEffect(() => {
     if (!games || games.length === 0) {
       setCurrentIndex(0);
       return;
     }
-    //Sets and ensure currentIndex is within bounds
     setCurrentIndex((c) => (c >= games.length ? 0 : c));
   }, [games]);
 
-  // Auto-advance interval
+  // Auto-advance using a single-shot timeout for consistent timing
   useEffect(() => {
-    Duration = Duration * 1000; // Convert to milliseconds
-    if (isPaused || (games?.length ?? 0) <= 1) return; // If paused or not enough games, do nothing
-
-    if (intervalRef.current) { // If interval already exists, clear it
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
+    // Clear any existing timeout to ensure consistent timing
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
     }
 
-    intervalRef.current = setInterval(() => {
-      setCurrentIndex((c) => (c + 1) % games.length);
-    }, Duration); // The Duration here represents milliseconds. 
+    if (isPaused || (games?.length ?? 0) <= 1) return; // Don't auto-advance if paused or not enough games to display(the latter shouldn't happen under normal circumstances)
+
+    timeoutRef.current = setTimeout(() => {
+      setCurrentIndex((value) => (value + 1) % games.length); // Increment the index and use modulo to wrap around to the beginning when the end is reached
+    }, Duration);
 
     return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
       }
     };
-  }, [isPaused, games]);
+  }, [currentIndex, isPaused, games]);
 
-  const goTo = (index) => {
+  const goTo = (index) => { // Navigate to a specific game slide index
     if (!games || games.length === 0) return;
     setCurrentIndex(((index % games.length) + games.length) % games.length);
   };
 
-  const handlePrev = () => goTo(currentIndex - 1);
-  const handleNext = () => goTo(currentIndex + 1);
+  const handlePrev = () => goTo(currentIndex - 1);  // Goes to the previous game in the list
+  const handleNext = () => goTo(currentIndex + 1);  // Goes to the next game in the list
 
-  // Touch handlers for swipe
+  // Touch handlers for swipe (pause auto-play while interacting, again you won't see this in action but its good to have here for future proofing)
   const onTouchStart = (e) => {
     touchStartX.current = e.touches?.[0]?.clientX ?? null;
     touchDeltaX.current = 0;
     setIsPaused(true);
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
   };
   const onTouchMove = (e) => {
     if (touchStartX.current == null) return;
@@ -66,7 +74,7 @@ const GamesHolder = ({ title = "Featured", games = [] }) => {
   };
   const onTouchEnd = () => {
     const delta = touchDeltaX.current;
-    const threshold = 50; // px required to count as a swipe
+    const threshold = 50; 
     if (delta > threshold) {
       handlePrev();
     } else if (delta < -threshold) {
@@ -74,19 +82,11 @@ const GamesHolder = ({ title = "Featured", games = [] }) => {
     }
     touchStartX.current = null;
     touchDeltaX.current = 0;
-    // Small delay before resuming auto-play to avoid immediate advance and ruin the page.
-    setTimeout(() => setIsPaused(false), 500);
+    // Resume autoplay after short delay to avoid immediate advance
+    setTimeout(() => setIsPaused(false), 600); // You can modify the delay as needed here, it is in milliseconds
   };
 
-  if (!games || games.length === 0) {
-    return null;
-  }
-
-  // Percentage each slide occupies of the wrapper, please touch this very carefully as it might ruin the appearance.
-  const slidePercent = 100 / games.length;
-  // translate value relative to wrapper width
-  const translatePercent = -(currentIndex * slidePercent);
-
+// Javascript rendering code for the component
   return (
     <motion.section
       className="w-full max-w-6xl mx-auto px-4 md:px-6 py-12 relative z-10"
@@ -101,7 +101,6 @@ const GamesHolder = ({ title = "Featured", games = [] }) => {
       </h3>
 
       <div className="relative">
-        {/* Carousel viewport - hides overflow so page won't jump */}
         <div
           className="w-full overflow-hidden"
           style={{ touchAction: "pan-y", WebkitOverflowScrolling: "touch", overscrollBehavior: "contain" }}
@@ -109,19 +108,17 @@ const GamesHolder = ({ title = "Featured", games = [] }) => {
           onTouchMove={onTouchMove}
           onTouchEnd={onTouchEnd}
         >
-          {/* slides wrapper - width = n * 100% (of container); translateX is relative to wrapper width */}
           <motion.div
             className="flex"
-            animate={{ x: `${translatePercent}%` }}
+            animate={{ x: `-${currentIndex * (100 / games.length)}%` }}
             transition={{ type: "spring", stiffness: 120, damping: 20 }}
             style={{ width: `${games.length * 100}%` }}
           >
             {games.map((game, idx) => (
-              // each slide width = (100 / n)% of wrapper so it equals container width
               <div
                 key={game.id ?? game._id ?? idx}
                 className="flex-shrink-0 flex justify-center"
-                style={{ width: `${slidePercent}%` }}
+                style={{ width: `${100 / games.length}%` }}
                 aria-hidden={idx !== currentIndex}
               >
                 <article
@@ -160,7 +157,6 @@ const GamesHolder = ({ title = "Featured", games = [] }) => {
           </motion.div>
         </div>
 
-        {/* Prev / Next (optional) */}
         <button
           onClick={handlePrev}
           className="hidden md:flex absolute left-2 top-1/2 -translate-y-1/2 items-center justify-center w-9 h-9 rounded-full bg-white/6 text-white hover:bg-white/10 focus:outline-none"
@@ -176,7 +172,6 @@ const GamesHolder = ({ title = "Featured", games = [] }) => {
           ›
         </button>
 
-        {/* Dots */}
         <div className="flex items-center justify-center gap-2 mt-6">
           {games.map((_, i) => (
             <button
@@ -193,3 +188,4 @@ const GamesHolder = ({ title = "Featured", games = [] }) => {
 };
 
 export default GamesHolder;
+// ...existing code...
