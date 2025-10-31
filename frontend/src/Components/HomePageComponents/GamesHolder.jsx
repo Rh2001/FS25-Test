@@ -5,11 +5,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { sectionVariants } from "../GlobalFunctions/Variants"; 
+import { useNavigate } from "react-router-dom";
 
 const GamesHolder = ({ title = "Featured", games = [] }) => {
   const [currentIndex, setCurrentIndex] = useState(0); // Current slide index
   const [isPaused, setIsPaused] = useState(false); // To control auto-scroll pausing
   const timeoutRef = useRef(null);
+  const navigate = useNavigate();
 
   // Touch/swipe tracking for mobile devices(You will not see this in action but its good to have here for future proofing)
   const touchStartX = useRef(null);
@@ -57,7 +59,7 @@ const GamesHolder = ({ title = "Featured", games = [] }) => {
   const handlePrev = () => goTo(currentIndex - 1);  // Goes to the previous game in the list
   const handleNext = () => goTo(currentIndex + 1);  // Goes to the next game in the list
 
-  // Touch handlers for swipe (pause auto-play while interacting, again you won't see this in action but its good to have here for future proofing)
+  // Touch Handlers for swipe support.
   const onTouchStart = (e) => {
     touchStartX.current = e.touches?.[0]?.clientX ?? null;
     touchDeltaX.current = 0;
@@ -93,8 +95,8 @@ const GamesHolder = ({ title = "Featured", games = [] }) => {
       variants={sectionVariants}
       initial="hidden"
       animate="visible"
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
+      onMouseEnter={() => setIsPaused(true)} // Pause auto-scroll on mouse hover 
+      onMouseLeave={() => setIsPaused(false)} // Resume auto-scroll when mouse leaves
     >
       <h3 className="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-cyan-500 mb-8 text-center">
         {title}
@@ -146,9 +148,15 @@ const GamesHolder = ({ title = "Featured", games = [] }) => {
                         </p>
                         {game.platform && <p className="text-xs text-gray-400 mt-1">{game.platform}</p>}
                       </div>
-                      <button className="bg-white text-black font-semibold px-5 py-3 rounded-md shadow-sm hover:opacity-95 transition">
-                        Buy Now
-                      </button>
+                      <motion.button
+                        whileTap={{ scale: 1.55 }}
+                        transition={{ type: "spring", stiffness: 100, damping: 55 }}
+                        className="bg-white text-black font-semibold px-5 py-3 rounded-md shadow-sm transition-all duration-200 hover:bg-gradient-to-r hover:from-sky-400 hover:to-cyan-500 hover:text-black focus:outline-none focus:ring-2 focus:ring-sky-400"
+                       // onClick={() => window.location.href = `/store/game/${game.id || game._id || ""}`} // Redirect to the game's page full reload.
+                        onClick={() => navigate(`/store/game/${game.id || game._id || ""}`)} // Redirect to the game's page without full reload.
+                      >
+                              Buy Now
+                      </motion.button>
                     </div>
                   </div>
                 </article>
@@ -188,4 +196,3 @@ const GamesHolder = ({ title = "Featured", games = [] }) => {
 };
 
 export default GamesHolder;
-// ...existing code...

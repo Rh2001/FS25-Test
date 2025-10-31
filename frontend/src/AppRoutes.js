@@ -18,6 +18,9 @@ const AppRoutes = [
     {
         path: "/store" ,
         element: <StorePage />
+    },
+    {
+      path: "/store/game/:id", element : <StorePage />
     }
 
 ]
