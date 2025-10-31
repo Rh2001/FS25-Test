@@ -11,7 +11,7 @@ namespace TestApp.Models
 
     public class MongoCollections
     {
-        public string Customer { get; set; } = null!;
+        public string User { get; set; } = null!;
         public string FeaturedGames { get; set; } = null!;
 
         public string StoreGames { get; set; } = null!;

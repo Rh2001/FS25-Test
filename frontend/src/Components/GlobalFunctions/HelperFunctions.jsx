@@ -4,7 +4,7 @@ import Lenis from "@studio-freight/lenis";
 
 // Custom hook to fetch featured games
 
-const useFeaturedGames = () => {
+export const useFeaturedGames = () => {
   const [games, setGames] = useState([]);
 
   useEffect(() => {
@@ -45,7 +45,7 @@ export const useStoreGames = () => { // Maybe i combine two custom hooks togethe
   return games;
 };
 
- const useCreateLenis = () => {
+ export const useCreateLenis = () => {
   useEffect(() => {
     const lenis = new Lenis({
       duration: 1.3,
@@ -65,4 +65,13 @@ export const useStoreGames = () => { // Maybe i combine two custom hooks togethe
     return () => lenis.destroy(); 
   }, []);
 };
-export { useFeaturedGames, useCreateLenis };
+
+export const useCreateUser = async (user) => {
+  const res = await fetch('/api/user', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(user)
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+};

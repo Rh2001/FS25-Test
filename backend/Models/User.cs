@@ -3,7 +3,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace TestApp.Models
 {
-    public class Customer
+    public class User
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
@@ -26,6 +26,9 @@ namespace TestApp.Models
 
         [BsonElement("age")]
         public int Age { get; set; }
+
+        [BsonElement("permissionlevel")]
+        public int PermissionLevel { get; set; } = 0; // 0 = user, 1 = admin
 
     }
 }

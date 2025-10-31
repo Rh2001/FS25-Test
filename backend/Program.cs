@@ -14,7 +14,7 @@ builder.Services.AddCors(options =>
 
 // Configure MongoDB settings
 builder.Services.Configure<MongoDBSettings>(builder.Configuration.GetSection("MongoDBConnection")); // Bind the "MongoDBConnection" section
-builder.Services.AddSingleton<CustomerServices>();      //Add MongoDB StoreServices to communicate with MongoDB
+builder.Services.AddSingleton<UserServices>();      //Add MongoDB StoreServices to communicate with MongoDB
 builder.Services.AddSingleton<FeaturedGamesServices>(); //Add MongoDB FeaturedGamesServices to communicate with MongoDB
 builder.Services.AddSingleton<StoreGamesServices>();    //Add MongoDB StoreGamesServices to communicate with MongoDB
  
