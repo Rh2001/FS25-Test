@@ -28,7 +28,7 @@ namespace TestApp.Models
         public int Age { get; set; }
 
         [BsonElement("permissionlevel")]
-        public int PermissionLevel { get; set; } = 0; // 0 = user, 1 = admin
+        public string[] Roles { get; set; } = null!; 
 
     }
 }

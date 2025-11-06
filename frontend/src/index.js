@@ -7,6 +7,14 @@ import './index.css';
 import Navbar from './Components/Global/Navbar';
 import Footer from './Components/Global/Footer';
 import ScrollToTop from './Components/GlobalFunctions/ScrollTop';
+import { useCreateLenis } from './Components/GlobalFunctions/HelperFunctions';
+
+const GlobalFunctions = () => 
+{
+  useCreateLenis(); // This function is used to create the lenis scroll effect globally
+  return null;
+}
+    
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -16,7 +24,8 @@ root.render(
     <ScrollToTop behavior = "auto"/>  {/* This is a bugfix to scroll to top after each routing*/}
     <div className="flex flex-col min-h-screen">            
         <Navbar />
-        <main className="flex-1 min-h-0">                            
+        <main className="flex-1 min-h-0">    
+          <GlobalFunctions/>                        
           <App />
         </main>
         <Footer />

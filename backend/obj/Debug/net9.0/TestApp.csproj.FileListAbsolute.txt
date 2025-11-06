@@ -196,3 +196,11 @@ D:\FS25 Test\backend\obj\Debug\net9.0\refint\TestApp.dll
 D:\FS25 Test\backend\obj\Debug\net9.0\TestApp.pdb
 D:\FS25 Test\backend\obj\Debug\net9.0\TestApp.genruntimeconfig.cache
 D:\FS25 Test\backend\obj\Debug\net9.0\ref\TestApp.dll
+D:\FS25 Test\backend\bin\Debug\net9.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+D:\FS25 Test\backend\bin\Debug\net9.0\Microsoft.IdentityModel.Abstractions.dll
+D:\FS25 Test\backend\bin\Debug\net9.0\Microsoft.IdentityModel.JsonWebTokens.dll
+D:\FS25 Test\backend\bin\Debug\net9.0\Microsoft.IdentityModel.Logging.dll
+D:\FS25 Test\backend\bin\Debug\net9.0\Microsoft.IdentityModel.Protocols.dll
+D:\FS25 Test\backend\bin\Debug\net9.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+D:\FS25 Test\backend\bin\Debug\net9.0\Microsoft.IdentityModel.Tokens.dll
+D:\FS25 Test\backend\bin\Debug\net9.0\System.IdentityModel.Tokens.Jwt.dll
