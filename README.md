@@ -22,7 +22,7 @@ This project uses:
 
 ## Todo
 
-- OAuth for logging in.
+- JWT for logging in.
 - Use Stripe for a mock payment method.
 
 
