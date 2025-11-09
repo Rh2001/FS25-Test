@@ -2,6 +2,8 @@ using System.Diagnostics;
 using TestApp.Services;
 using TestApp.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+
 
 [ApiController]
 [Route("api/user")]
@@ -21,11 +23,12 @@ public class UserController : ControllerBase
             Console.WriteLine($"Failed to initialize CustomerController: {ex.Message}");
             throw new ArgumentNullException();
         }
-        
+
     }
 
 
-    [HttpGet]
+    [HttpGet("protected")]
+    [Authorize]
     public async Task<ActionResult<List<User>>> Get()  // Changed to actionresult to allow error handling
     {
         try
@@ -50,21 +53,33 @@ public class UserController : ControllerBase
     }
 
     [HttpPost]
-public async Task<ActionResult<User>> InsertUser([FromBody] User user)
-{
-    if (user == null) return BadRequest("User cannot be empty.");
-    try
+    public async Task<ActionResult<User>> InsertUser([FromBody] User user)
     {
-        await _userServices.CreateAsync(user);
-        return CreatedAtAction(nameof(Get), null, user);
+        if (user == null) return BadRequest("User cannot be empty.");
+        try
+        {
+            await _userServices.CreateAsync(user);
+            return CreatedAtAction(nameof(Get), null, user);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return StatusCode(500, "Internal server error");
+        }
     }
-    catch (Exception ex)
+    [HttpPost("login")]
+    public async Task<ActionResult<string>> Login([FromBody] LoginRequest loginRequest)
     {
-        Console.WriteLine(ex.Message);
-        return StatusCode(500, "Internal server error");
-    }
-}
+        var token = await _userServices.AuthenticateAsync(loginRequest.Email, loginRequest.Password);
+        if (token == null)
+            return Unauthorized(new { message = "Invalid credentials" });
 
-   
+        return Ok(new { token });
+    }
+    public record LoginRequest(string Email, string Password);
+
+
+
+
 
 }

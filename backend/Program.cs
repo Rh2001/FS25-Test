@@ -2,7 +2,7 @@ using TestApp.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// I modularized the service configurations using extension methods -> much cleaner program.cs file.
+// I modularized the service configurations using extension methods -> much cleaner program.cs file. The naming convention is because I didn't want my extensions to collide with .NET built-in methods.
 CorsExtension.AddMyCors(builder.Services);
 builder.Services.AddMyMongoDB(builder.Configuration);
 builder.Services.AddMyJWT(builder.Configuration);
