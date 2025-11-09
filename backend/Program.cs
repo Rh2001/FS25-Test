@@ -4,6 +4,8 @@ using TestApp.Services;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens; // For use with tokens.
+using Microsoft.OpenApi.Models;
+using System.Reflection.Metadata; // For Swagger
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -32,14 +34,46 @@ builder.Services.AddScoped<UserServices>();      //Add MongoDB StoreServices to 
 var KeyBytes = Encoding.UTF8.GetBytes(JWTKey); // Convert the secret key to bytes
 
 
-/*// Add services to the container.
-builder.Services.AddControllersWithViews();*/
+
 builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddSwaggerGen(c =>  // Swagger is a lifesaver when it comes to testing API endpoints.
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "BokharApp", Version = "v1" });
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization",
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+
+    });
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                },
+                Scheme = "oauth2",
+                Name = "Bearer",
+                In = ParameterLocation.Header,
+            },
+            new List<string>()
+        }
+    });
+});
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(options =>
+}).AddJwtBearer(options =>   // This part might be a little confusing, we are configuring the JWT bearer options here, you can modify the JWTIssuer and other settings in appsettings.json
                 {
                     options.RequireHttpsMetadata = true;
                     options.SaveToken = true;
@@ -84,8 +118,11 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 var app = builder.Build();
 app.UseCors("AllowReactApp");
+app.UseSwagger();
+app.UseSwaggerUI(); // I added this line to enable Swagger UI, it will help us with testing the API endpoints.
 app.UseHttpsRedirection(); // Enforce HTTPS in the backend.
 app.MapControllers();
+
 //app.UseAuthentication();
 //app.UseAuthorization();
 app.Run();
