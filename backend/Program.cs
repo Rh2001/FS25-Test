@@ -5,8 +5,8 @@ using TestApp.Services;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens; // For use with tokens.
-using Microsoft.OpenApi.Models;
-using System.Reflection.Metadata; // For Swagger
+using Microsoft.OpenApi.Models; // For Swagger
+using System.Reflection.Metadata; 
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +17,7 @@ var JWTKey = JWTSettingsSection.GetValue<string>("SecretKey");
 var JWTTokenExpirationTime = JWTSettingsSection.GetValue<int>("ExpirationTime");
 var JWTIssuer = JWTSettingsSection.GetValue<string>("Issuer");
 var JWTAudience = JWTSettingsSection.GetValue<string>("Audience");
+var SwaggerURL = "https://localhost:443/swagger";
 
 // Adding CORS support to our backend
 builder.Services.AddCors(options =>
@@ -124,8 +125,35 @@ app.UseSwaggerUI(); // I added this line to enable Swagger UI, it will help us w
 app.UseHttpsRedirection(); // Enforce HTTPS in the backend.
 app.MapControllers();
 
-//app.UseAuthentication();
-//app.UseAuthorization();
+
+try // Quality of life change to make my life easier, this opens swagger when i run the server automatically so i dont type it in everytime.
+{
+    // Wait a bit to ensure Kestrel starts before opening the browser
+    _= Task.Run(async () => // Fire and forget because thats how we do it.
+    {
+        await Task.Delay(2000);
+        try
+        {
+            var psi = new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = SwaggerURL,
+                UseShellExecute = true // Open default browser.
+            };
+            System.Diagnostics.Process.Start(psi);
+        }
+        catch (Exception ex)
+        {
+         Console.WriteLine($"Failed to open Swagger automatically: {ex.Message}");
+        }
+    });
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Error scheduling Swagger launch: {ex.Message}");
+}
+
+
+
 app.Run();
 
 /*
