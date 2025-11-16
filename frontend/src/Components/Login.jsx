@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import {createUser} from "./RegisterComponents/APIUtils/API.jsx";
 
 function Login() {
   const navigate = useNavigate();
@@ -16,30 +17,7 @@ function Login() {
   const [errorField, setErrorField] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const createUser = async (user) => {
-    const base =  "https://localhost:443";
-    const res = await fetch(`${base}/api/user`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(user),
-    });
-
-    if (!res.ok) {
-      let body;
-      try {
-        body = await res.json();
-      } catch {
-        body = await res.text().catch(() => null);
-      }
-      if (body && body.errors) {
-        const messages = Object.values(body.errors).flat().join("; ");
-        throw new Error(messages || JSON.stringify(body));
-      }
-      throw new Error(body?.title || `Request failed: ${res.status}`);
-    }
-
-    return res.json().catch(() => null);
-  };
+  
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -68,7 +46,8 @@ function Login() {
 
     try {
       setLoading(true);
-      await createUser(userPayload);
+      const response = await createUser(userPayload);
+      localStorage.setItem("token", response.token);
       navigate("/store");
     } catch (err) {
       console.error("Create user failed:", err);

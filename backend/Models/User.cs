@@ -7,7 +7,7 @@ namespace TestApp.Models
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; } = null!;
+        public string? Id { get; set; } // Nullable to allow MongoDB to auto generate
 
         [BsonElement("name")]
         public string Name { get; set; } = null!;
@@ -30,8 +30,8 @@ namespace TestApp.Models
         [BsonElement("age")]
         public int Age { get; set; }
 
-        [BsonElement("permissionlevel")]
-        public string[] Roles { get; set; } = null!; 
+        [BsonElement("permissionLevel")]
+        public int PermissionLevel { get; set; } = 0;    
 
     }
 }

@@ -53,20 +53,36 @@ public class UserController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<User>> InsertUser([FromBody] User user)
+public async Task<ActionResult<object>> Register([FromBody] User user)
+{
+    if (user == null)
+        return BadRequest("User cannot be empty.");
+
+    try
     {
-        if (user == null) return BadRequest("User cannot be empty.");
-        try
+        // Create user in MongoDB
+        await _userServices.CreateAsync(user);
+
+        // Generate JWT token for the new user
+        var token = await _userServices.AuthenticateAsync(user.Email, user.Password);
+
+        if (token == null)
+            return StatusCode(500, "Token generation failed, why?.");
+
+        return Ok(new
         {
-            await _userServices.CreateAsync(user);
-            return CreatedAtAction(nameof(Get), null, user);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-            return StatusCode(500, "Internal server error");
-        }
+            message = "User registered successfully",
+            user,
+            token
+        });
     }
+    catch (Exception ex)
+    {
+        Console.WriteLine(ex);
+        return StatusCode(500, "Internal server error");
+    }
+}
+
     [HttpPost("login")]
     public async Task<ActionResult<string>> Login([FromBody] LoginRequest loginRequest)
     {

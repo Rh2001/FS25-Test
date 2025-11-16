@@ -69,10 +69,8 @@ namespace TestApp.Services
                 new Claim("id", user.Id)
             };
 
-            foreach(var role in user.Roles)
-            {
-                claims.Add(new Claim(ClaimTypes.Role, role));
-            }
+            claims.Add(new Claim("permissionLevel", user.PermissionLevel.ToString()));
+
 
             // Create token
             var token = new JwtSecurityToken(
