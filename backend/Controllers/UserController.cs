@@ -57,7 +57,7 @@ public async Task<ActionResult<object>> Register([FromBody] User user)
 {
     if (user == null)
         return BadRequest("User cannot be empty.");
-
+    
     try
     {
         // Create user in MongoDB

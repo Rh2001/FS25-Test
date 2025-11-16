@@ -1,6 +1,6 @@
 import GameContainer from "./StorePageComponents/GameContainer";
 import { useStoreGames } from "./GlobalFunctions/HelperFunctions";
-import Hero from "./HomePageComponents/Hero";
+import Hero from "./StorePageComponents/Hero";
 
 function StorePage() 
 {

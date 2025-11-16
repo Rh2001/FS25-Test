@@ -1,13 +1,11 @@
-export const createUser = async (user, role = null) => { // Default role is null, backend will assign default role if none is provided
+export const createUser = async (user) => {
   const URL = "https://localhost:443";
 
   const res = await fetch(`${URL}/api/user`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify( user ),  
+    body: JSON.stringify(user),
   });
-
-  console.log("Create user response status:", res.status);
 
   if (!res.ok) {
     let body = null;
@@ -17,17 +15,12 @@ export const createUser = async (user, role = null) => { // Default role is null
       body = await res.text().catch(() => null);
     }
 
-    if (body?.errors) {
-      const messages = Object.values(body.errors).flat().join("; ");
-      throw new Error(messages || JSON.stringify(body));
+    if (res.status === 555) {
+      throw new Error(555); // Throw custom error code for frontend
     }
 
-    throw new Error(`Request failed: ${res.status}`);
+    throw new Error(body?.message || `Request failed: ${res.status}`);
   }
 
-  
-  const result = await res.json();
-
-  // Return the created user 
-  return result;
+  return await res.json();
 };

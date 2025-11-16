@@ -1,11 +1,9 @@
-//Fix
-
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import {createUser} from "./RegisterComponents/APIUtils/API.jsx";
+import { createUser } from "./RegisterComponents/APIUtils/API.jsx";
 
-function Login() {
+function Register() {
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -14,23 +12,29 @@ function Login() {
   const [age, setAge] = useState("");
   const [address, setAddress] = useState("");
   const [permissionLevel, setPermissionLevel] = useState("1");
-  const [errorField, setErrorField] = useState("");
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
-  
-
-  const handleLogin = async (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
+    if (age < 0){
+      setErrorMessage("Age cannot be a negative number.");
+      return;}
+    if (age < 18){
+      setErrorMessage("You must be 18 or older to register."); return;}
+    setErrorMessage("");
+    setSuccessMessage("");
 
-    const missing = [];
-    if (!name.trim()) missing.push("name");
-    if (!email.trim()) missing.push("email");
-    if (!phone.trim()) missing.push("phone");
-    if (!address.trim()) missing.push("address");
-    if (!password) missing.push("password");
+    const missingFields = [];
+    if (!name.trim()) missingFields.push("Name");
+    if (!email.trim()) missingFields.push("Email");
+    if (!password) missingFields.push("Password");
+    if (!phone.trim()) missingFields.push("Phone");
+    if (!address.trim()) missingFields.push("Address");
 
-    if (missing.length) {
-      alert("Please fill required fields: " + missing.join(", "));
+    if (missingFields.length > 0) {
+      setErrorMessage(`Please fill in: ${missingFields.join(", ")}`);
       return;
     }
 
@@ -39,67 +43,66 @@ function Login() {
       email: email.trim(),
       password,
       phone: phone.trim(),
-      age: age ? Number(age) : null,
+      age: age ? Number(age) : 0,
       address: address.trim(),
       permissionLevel: Number(permissionLevel) || 1,
     };
 
     try {
-      setLoading(true);
-      const response = await createUser(userPayload);
+      setLoading(true); // Set loading state to true.
+      const response = await createUser(userPayload); // Await response from backend.
+      window.scrollTo({top: 0, behavior: "smooth"}); // Scroll to top of page.
+      setSuccessMessage("Registration successful! Redirecting...");
       localStorage.setItem("token", response.token);
-      navigate("/store");
+
+      setTimeout(() => navigate("/store"), 1500); // Auto redirect after success.
     } catch (err) {
       console.error("Create user failed:", err);
-      alert("Registration failed: " + (err.message || "Unknown error"));
+      setErrorMessage(err.message || "Registration failed. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   const shakeVariant = {
-    shake: {
-      x: [0, -8, 8, -6, 6, 0],
-      transition: { duration: 0.5, ease: "easeInOut" },
-    },
+    shake: { x: [0, -8, 8, -6, 6, 0], transition: { duration: 0.5, ease: "easeInOut" } },
   };
 
   const containerVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6, ease: "easeOut", staggerChildren: 0.1 },
-    },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut", staggerChildren: 0.1 } },
   };
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 15 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-  };
+  const itemVariants = { hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } };
 
   return (
     <div className="min-h-screen bg-[#0b0e14] text-white font-sans flex flex-col">
       <main className="flex-1 flex items-center justify-center pt-24 pb-12">
-        <motion.section
-          className="w-full max-w-md mx-4"
-          initial="hidden"
-          animate="visible"
-          variants={containerVariants}
-        >
+        <motion.section className="w-full max-w-md mx-4" initial="hidden" animate="visible" variants={containerVariants}>
           <motion.div className="bg-[#1b1f29]/90 border border-[#2c3342] rounded-2xl shadow-xl backdrop-blur-md overflow-hidden">
             <div className="p-8">
-              <motion.h2
-                variants={itemVariants}
-                className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-cyan-400 mb-2"
-              >
-                Register an Account
+              <motion.h2 variants={itemVariants} className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-cyan-400 mb-2">
+                Become a Bokhari
               </motion.h2>
               <motion.p variants={itemVariants} className="text-gray-400 text-sm mb-6">
-                Create an account to access your library and deals.
+                Create an account to access your personal library and deals.
               </motion.p>
 
-              <form onSubmit={handleLogin} className="space-y-4">
+              {/* Error Message */}
+              {errorMessage && (
+                <motion.div variants={shakeVariant} className="bg-red-600 text-white px-4 py-2 mb-4 rounded">
+                  {errorMessage}
+                </motion.div>
+              )}
+
+              {/* Success Message */}
+              {successMessage && (
+                <motion.div variants={shakeVariant} className="bg-green-600 text-white px-4 py-2 mb-4 rounded">
+                  {successMessage}
+                </motion.div>
+              )}
+
+              <form onSubmit={handleRegister} className="space-y-4">
                 <motion.div variants={itemVariants} className="grid grid-cols-1 gap-3">
                   <label className="block text-xs text-gray-400">Full name</label>
                   <input
@@ -111,37 +114,21 @@ function Login() {
                   />
 
                   <label className="block text-xs text-gray-400">Email</label>
-                  <motion.input
+                  <input
                     type="email"
                     placeholder="you@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    whileFocus={{
-                      scale: 1.01,
-                      boxShadow: "0 0 20px rgba(0,191,255,0.15)",
-                    }}
-                    className={`w-full bg-[#0f131a] border ${
-                      errorField === "email" || errorField === "both"
-                        ? "border-red-500 focus:ring-red-500"
-                        : "border-[#2b3240] focus:ring-sky-400"
-                    } rounded-lg px-3 py-2 text-sm placeholder-gray-500 focus:outline-none focus:ring-2 transition`}
+                    className="w-full bg-[#0f131a] border border-[#2b3240] rounded-lg px-3 py-2 text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-sky-400 transition"
                   />
 
                   <label className="block text-xs text-gray-400">Password</label>
-                  <motion.input
+                  <input
                     type="password"
                     placeholder="********"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    whileFocus={{
-                      scale: 1.01,
-                      boxShadow: "0 0 20px rgba(0,191,255,0.15)",
-                    }}
-                    className={`w-full bg-[#0f131a] border ${
-                      errorField === "password" || errorField === "both"
-                        ? "border-red-500 focus:ring-red-500"
-                        : "border-[#2b3240] focus:ring-cyan-400"
-                    } rounded-lg px-3 py-2 text-sm placeholder-gray-500 focus:outline-none focus:ring-2 transition`}
+                    className="w-full bg-[#0f131a] border border-[#2b3240] rounded-lg px-3 py-2 text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-400 transition"
                   />
 
                   <label className="block text-xs text-gray-400">Phone</label>
@@ -153,28 +140,19 @@ function Login() {
                     className="w-full bg-[#0f131a] border border-[#2b3240] rounded-lg px-3 py-2 text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-sky-400 transition"
                   />
 
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 gap-3">
                     <div>
                       <label className="block text-xs text-gray-400">Age</label>
                       <input
                         type="number"
                         placeholder="Age"
+                        min = {1} // No negatives this way
                         value={age}
                         onChange={(e) => setAge(e.target.value)}
                         className="w-full bg-[#0f131a] border border-[#2b3240] rounded-lg px-3 py-2 text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-sky-400 transition"
                       />
                     </div>
-                    <div>
-                      <label className="block text-xs text-gray-400">Permission</label>
-                      <input
-                        type="number"
-                        min="1"
-                        max="5"
-                        value={permissionLevel}
-                        onChange={(e) => setPermissionLevel(e.target.value)}
-                        className="w-full bg-[#0f131a] border border-[#2b3240] rounded-lg px-3 py-2 text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-sky-400 transition"
-                      />
-                    </div>
+                   
                   </div>
 
                   <label className="block text-xs text-gray-400">Address</label>
@@ -219,4 +197,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default Register;

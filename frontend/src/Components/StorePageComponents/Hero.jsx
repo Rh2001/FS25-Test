@@ -1,51 +1,70 @@
-import {motion} from "framer-motion";
+import React from "react";
+import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import YouTube from "react-youtube";
 
-<div
-      className="text-white font-sans min-h-screen overflow-x-hidden relative"
-      style={{
-        background: "linear-gradient(120deg, #0b0e14, #111827, #0b0e14)",
-        backgroundSize: "300% 300%",
-        animation: "gradientMove 12s ease infinite",
-      }}
-    >
-      {/* Animated Background*/}
-      <motion.div
-        className="absolute top-10 left-10 w-72 h-72 bg-sky-500/10 blur-3xl rounded-full"
-        animate={{ y: [0, 30, 0], x: [0, 15, 0] }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <motion.div
-        className="absolute bottom-10 right-10 w-80 h-80 bg-cyan-500/10 blur-3xl rounded-full"
-        animate={{ y: [0, -20, 0], x: [0, -10, 0] }}
-        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-      />
+function Hero() {
+  const navigate = useNavigate();
 
+  const opts = {
+    width: "640",
+    height: "320",
+    playerVars: {
+      autoplay: 0,
+      controls: 1,
+      modestbranding: 1,
+      loop: 1,
+      playlist: "wx2Irm3ZFz8",
+    },
+  };
 
+  return (
+    <div>
       {/* Hero Section */}
       <section
-        className="relative h-[60vh] flex items-center justify-center bg-center bg-cover text-center"
+        className="relative flex flex-col items-center justify-center bg-center bg-cover text-center"
         style={{
           backgroundImage:
-            "url('https://cdn.cloudflare.steamstatic.com/steam/clusters/sale_main_capsule/00a9de168c1638d35366c19e9f0562a42386c57c.jpg')",
+            "url('https://www.rpnation.com/gallery/steam-background-image.27232/full')",
         }}
       >
         <div className="absolute inset-0 bg-gradient-to-b from-[#0b0e14]/40 via-[#0b0e14]/70 to-[#0b0e14]/90" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(56,189,248,0.15),transparent_70%)]" />
+
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.2, ease: "easeOut" }}
-          className="relative z-10 max-w-xl px-6"
+          className="relative z-10 max-w-xl px-6 py-16 mt-16" // <-- Added mt-16 here
         >
-          <h2 className="text-4xl md:text-5xl font-extrabold mb-5 text-transparent bg-clip-text 
-                         bg-gradient-to-r from-sky-400 to-cyan-500 
-                         drop-shadow-[0_0_10px_rgba(56,189,248,0.4)]"
+          <h2
+            className="text-4xl md:text-5xl font-extrabold mb-5 text-transparent bg-clip-text 
+                       bg-gradient-to-r from-sky-400 to-cyan-500 
+                       drop-shadow-[0_0_10px_rgba(56,189,248,0.4)]"
           >
-            💎 Explore Our Store
+            💠 Featured Bokhari Deals
           </h2>
           <p className="text-gray-300 mb-8 text-lg leading-relaxed">
-            Browse the latest game collections with fair prices.
+            Explore the best digital game deals — instant, secure, and built for gamers.
           </p>
+          <motion.button
+            onClick={() => navigate("/store")}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="bg-gradient-to-r from-sky-500 to-cyan-500 text-black px-6 py-3 
+                       font-bold rounded-md hover:opacity-90 transition"
+          >
+            Browse Store
+          </motion.button>
+
+          {/* YouTube Video just below the button */}
+          <div className="mt-6 w-full flex justify-center">
+            <YouTube videoId="wx2Irm3ZFz8" opts={opts} />
+          </div>
         </motion.div>
       </section>
     </div>
+  );
+}
+
+export default Hero;

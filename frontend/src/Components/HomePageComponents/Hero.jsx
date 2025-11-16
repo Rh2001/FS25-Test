@@ -1,33 +1,46 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import YouTube from "react-youtube";
 
- // Hero Section Component moved here for clarity
- 
 function Hero() {
   const navigate = useNavigate();
 
+  const opts = {
+    width: "640",
+    height: "320",
+    playerVars: {
+      autoplay: 0,
+      controls: 1,
+      modestbranding: 1,
+      loop: 1,
+      playlist: "wx2Irm3ZFz8",
+    },
+  };
+
   return (
     <div>
+      {/* Hero Section */}
       <section
-        className="relative h-[70vh] flex items-center justify-center bg-center bg-cover text-center"
+        className="relative flex flex-col items-center justify-center bg-center bg-cover text-center"
         style={{
           backgroundImage:
-            "url('https://cdn.cloudflare.steamstatic.com/steam/clusters/sale_dailydeal/ce98cf45b08dbed905ce57a4bd6b451b53103a9f.jpg')",
+            "url('https://64.media.tumblr.com/d2aeeadb67c43e58dc51bb60fe520010/79353e6b9e4f0b16-b0/s540x810/6044960f72c4132455add58248c869aaa6b34cf0.gifv')",
         }}
       >
         <div className="absolute inset-0 bg-gradient-to-b from-[#0b0e14]/40 via-[#0b0e14]/70 to-[#0b0e14]/90" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(56,189,248,0.15),transparent_70%)]" />
+
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.2, ease: "easeOut" }}
-          className="relative z-10 max-w-xl px-6"
+          className="relative z-10 max-w-xl px-6 py-16 mt-16" // <-- Added mt-16 here
         >
           <h2
             className="text-4xl md:text-5xl font-extrabold mb-5 text-transparent bg-clip-text 
-                         bg-gradient-to-r from-sky-400 to-cyan-500 
-                         drop-shadow-[0_0_10px_rgba(56,189,248,0.4)]"
+                       bg-gradient-to-r from-sky-400 to-cyan-500 
+                       drop-shadow-[0_0_10px_rgba(56,189,248,0.4)]"
           >
             💠 Featured Bokhari Deals
           </h2>
@@ -43,6 +56,11 @@ function Hero() {
           >
             Browse Store
           </motion.button>
+
+          {/* YouTube Video just below the button */}
+          <div className="mt-6 w-full flex justify-center">
+            <YouTube videoId="wx2Irm3ZFz8" opts={opts} />
+          </div>
         </motion.div>
       </section>
     </div>
