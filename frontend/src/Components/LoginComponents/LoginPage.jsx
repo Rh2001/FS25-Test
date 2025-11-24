@@ -14,7 +14,7 @@ export default function LoginPage() {
         }}>
       <motion.div
         className="bg-[#1b1f29]/90 border border-[#2c3342] rounded-2xl shadow-xl p-8 w-full max-w-md"
-        initial={{ scale: 0.8, opacity: 0 }}
+        initial={{ scale: 0.5, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
       >
