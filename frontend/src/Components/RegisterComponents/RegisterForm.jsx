@@ -69,6 +69,15 @@ function RegisterForm() {
           {loading ? "Registering..." : "Register"}
         </button>
       </form>
+      <div className="mt-6 text-center">
+          <button
+            type="button"
+            onClick={() => navigate("/login")}
+            className="text-sky-400 font-semibold hover:underline hover:text-sky-300 transition-colors duration-300"
+          >
+            Already a member? Login
+          </button>
+        </div>
       <div className="mt-6 text-center text-xs text-gray-500">
         &copy; {new Date().getFullYear()} Bokhar Store
       </div>

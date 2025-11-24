@@ -1,6 +1,7 @@
 // Cleaner routing configuration
 
 import HomePage from "./Components/HomePage";
+import Login from "./Components/LoginOld";
 import Register from "./Components/Register";
 import StorePage from "./Components/StorePage";
 
@@ -23,8 +24,14 @@ const AppRoutes = [
         path: "/register",
         element: <Register />
     },
+
     {
-      path: "/store/game/:id", element : <StorePage />
+      path: "/login",
+      element: <Login />
+    },
+    {
+      path: "/store/game/:id", 
+      element : <StorePage />
     }
 
 ]
