@@ -52,7 +52,7 @@ public class UserController : ControllerBase
         }
     }
 
-    [HttpPost]
+[HttpPost]
 public async Task<ActionResult<object>> Register([FromBody] User user)
 {
     if (user == null)

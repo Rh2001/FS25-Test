@@ -55,4 +55,25 @@ code {
   transition: all 0.3s ease;
 }
 
+/* Chrome, Edge, Safari Scrollbar*/
+::-webkit-scrollbar {
+  width: 8px;
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2b3240;
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #38bdf8; 
+}
+
+/* Firefox Scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #2b3240 transparent;
+}
+
 

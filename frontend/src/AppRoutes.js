@@ -20,6 +20,10 @@ const AppRoutes = [
         element: <StorePage />
     },
     {
+        path: "/register",
+        element: <Register />
+    },
+    {
       path: "/store/game/:id", element : <StorePage />
     }
 
