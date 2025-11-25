@@ -95,6 +95,7 @@ const GamesHolder = ({ title = "Featured", games = [] }) => {
       variants={sectionVariants}
       initial="hidden"
       animate="visible"
+      
       onMouseEnter={() => setIsPaused(true)} // Pause auto-scroll on mouse hover 
       onMouseLeave={() => setIsPaused(false)} // Resume auto-scroll when mouse leaves
     >
@@ -112,7 +113,7 @@ const GamesHolder = ({ title = "Featured", games = [] }) => {
         >
           <motion.div
             className="flex"
-            animate={{ x: `-${currentIndex * (100 / games.length)}%` }}
+            animate={{ x: `-${currentIndex * (100 / games.length)}%` }} // Calculate the x position based on current index
             transition={{ type: "spring", stiffness: 120, damping: 20 }}
             style={{ width: `${games.length * 100}%` }}
           >
@@ -167,14 +168,14 @@ const GamesHolder = ({ title = "Featured", games = [] }) => {
 
         <button
           onClick={handlePrev}
-          className="hidden md:flex absolute left-2 top-1/2 -translate-y-1/2 items-center justify-center w-9 h-9 rounded-full bg-white/6 text-white hover:bg-white/10 focus:outline-none"
+          className="hidden md:flex absolute left-2 top-1/2 -translate-y-1/2 items-center justify-center w-9 h-9 rounded-full bg-black text-white hover:bg-black/80 focus:outline-none"
           aria-label="Previous"
         >
           ‹
         </button>
         <button
           onClick={handleNext}
-          className="hidden md:flex absolute right-2 top-1/2 -translate-y-1/2 items-center justify-center w-9 h-9 rounded-full bg-white/6 text-white hover:bg-white/10 focus:outline-none"
+          className="hidden md:flex absolute right-2 top-1/2 -translate-y-1/2 items-center justify-center w-9 h-9 rounded-full bg-black text-white hover:bg-black/80 focus:outline-none"
           aria-label="Next"
         >
           ›

@@ -5,13 +5,8 @@ import Space01 from "./Assets/Space01.jpg";
 
 export default function RegisterPage() {
   return (
-    <div className="min-h-screen bg-[#0b0e14] text-white flex"
-    style ={{
-        backgroundImage: `url(${Space01})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-    }}>
+    <div className="min-h-screen bg-[#0b0e14] text-white flex bg-cover bg-center bg-no-repeat"
+    style={{ backgroundImage: `url(${Space01})` }}>
         
       <main className="flex-1 flex items-center justify-center pt-24 pb-12">
         <motion.section // Framer motion pop up effect

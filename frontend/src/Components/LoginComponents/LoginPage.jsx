@@ -5,12 +5,9 @@ import Spaceman01 from "./Assets/Spaceman01.jpg";
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#0b0e14]"
+    <div className="min-h-screen flex items-center justify-center bg-[#0b0e14] bg-cover bg-center bg-no-repeat"
     style ={{
             backgroundImage: `url(${Spaceman01})`, // Background image from local assets folder.
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
         }}>
       <motion.div
         className="bg-[#1b1f29]/90 border border-[#2c3342] rounded-2xl shadow-xl p-8 w-full max-w-md"
