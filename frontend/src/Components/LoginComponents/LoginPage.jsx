@@ -7,7 +7,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#0b0e14]"
     style ={{
-            backgroundImage: `url(${Spaceman01})`,
+            backgroundImage: `url(${Spaceman01})`, // Background image from local assets folder.
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',

@@ -15,21 +15,30 @@ export default function LoginForm() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError("");
+    setError(""); // Blank error.
     if (!form.email.trim() || !form.password) {
-      setError("Email and password required.");
+      setError("Email and password required."); // Fields are empty.
       return;
     }
     setLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      setLoading(false);
-      if (form.email === "test@example.com" && form.password === "password") {
-        navigate("/store");
+    try {
+      const res = await fetch("https://localhost:443/api/user/login", { 
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: form.email, password: form.password }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data?.message || "Login failed.");
       } else {
-        setError("Invalid credentials.");
+        localStorage.setItem("token", data.token); // Save JWT if needed
+        navigate("/store");
       }
-    }, 800);
+    } catch (err) {
+      setError("Network error.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

@@ -1,7 +1,7 @@
 // Cleaner routing configuration
 
 import HomePage from "./Components/HomePage";
-import Login from "./Components/LoginOld";
+import Login from "./Components/Login";
 import Register from "./Components/Register";
 import StorePage from "./Components/StorePage";
 
