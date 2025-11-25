@@ -15,14 +15,10 @@ export default function AstroMan() {
   }, [volume]);
 
   return (
-    <div
-      className="min-h-screen w-full relative font-titillium"
-      style={{
-        backgroundImage: `url(${SpaceBackground})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
-    >
+   <div
+  className="min-h-[200vh] w-full relative font-titillium bg-cover bg-top bg-no-repeat"
+  style={{ backgroundImage: `url(${SpaceBackground})` }}
+>
       {/* Global music player */}
       <audio
         ref={audioRef}
@@ -30,7 +26,7 @@ export default function AstroMan() {
         autoPlay
         loop
         controls={false}
-        style={{ display: "none" }}
+        className="hidden"
       />
 
       {/* Overlay for readability */}
@@ -65,6 +61,7 @@ export default function AstroMan() {
               expensive gaming just as much as you do, so trust him to find the
               best deals across infinity and beyond!
             </p>
+
             {/* Volume slider */}
             <div className="mt-8 flex items-center gap-3 justify-center">
               <label htmlFor="volume" className="text-white text-sm font-semibold">
