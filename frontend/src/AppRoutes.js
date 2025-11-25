@@ -1,5 +1,6 @@
 // Cleaner routing configuration
 
+import AstroMan from "./Components/AstroMan";
 import HomePage from "./Components/HomePage";
 import Login from "./Components/Login";
 import Register from "./Components/Register";
@@ -32,6 +33,10 @@ const AppRoutes = [
     {
       path: "/store/game/:id", 
       element : <StorePage />
+    },
+    {
+        path: "/astro",
+        element : <AstroMan/>
     }
 
 ]

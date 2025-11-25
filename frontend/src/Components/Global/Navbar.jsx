@@ -5,6 +5,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from 'framer-motion';
 import { GiHamburgerMenu } from "react-icons/gi";
 import { IoCloseSharp } from "react-icons/io5";
+import AstroMan from '../GlobalAssets/AstroMan.png';
 
 const Navbar = () => {
   const [openNavBar, setOpenNavBar] = useState(false);
@@ -18,18 +19,26 @@ const Navbar = () => {
   ];
 
   return (
-    <div>
-      <header className="fixed w-full z-50 neon-navbar">
-        <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
-          <motion.h1  // Logo / Brand Name
-            onClick={() => navigate("/")}
-            initial={{ textShadow: "0 0 8px rgba(56,189,248,0.8)" }}
-            animate={{ textShadow: ["0 0 8px rgba(56,189,248,0.8)","0 0 18px rgba(56,189,248,1)","0 0 8px rgba(56,189,248,0.8)"] }}
+     <div>
+    <header className="fixed w-full z-50 neon-navbar">
+      <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
+        <div className="flex items-center gap-4">
+          <motion.img
+            src={AstroMan}
+            alt="AstroMan Logo"
+            onClick={() => navigate("/astro")}
+            initial={{ scale: 0.95, opacity: 0.8 }}
+            animate={{ scale: [0.95, 1.05, 0.95], opacity: [0.8, 1, 0.8] }}
             transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-            className="text-2xl md:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-cyan-400 to-sky-500 cursor-pointer drop-shadow-[0_0_10px_rgba(56,189,248,0.5)] hover:drop-shadow-[0_0_18px_rgba(56,189,248,0.9)] transition-all duration-300"
+            className="h-12 w-12 cursor-pointer drop-shadow-[0_0_10px_rgba(56,189,248,0.5)] hover:drop-shadow-[0_0_18px_rgba(56,189,248,0.9)] transition-all duration-300"
+          />
+          <span
+            className="text-2xl font-extrabold text-purple-400 drop-shadow-lg cursor-pointer"
+            onClick={() => navigate("/")}
           >
             Bokhar Store
-          </motion.h1>
+          </span>
+        </div>
 
 
           {/* Responsive Hamburger Button - uses text color utilities so it matches site theme */}
