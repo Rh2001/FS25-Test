@@ -53,45 +53,64 @@ public class UserController : ControllerBase
     }
 
 [HttpPost]
-public async Task<ActionResult<object>> Register([FromBody] User user)
-{
-    if (user == null)
-        return BadRequest("User cannot be empty.");
-    
-    try
+    public async Task<ActionResult<object>> Register([FromBody] User user)
     {
-        // Create user in MongoDB
-        await _userServices.CreateAsync(user);
+        if (user == null)
+            return BadRequest("User cannot be empty.");
 
-        // Generate JWT token for the new user
-        var token = await _userServices.AuthenticateAsync(user.Email, user.Password);
+        if (string.IsNullOrWhiteSpace(user.Email))
+            return BadRequest(new { message = "Email is required." });
 
-        if (token == null)
-            return StatusCode(500, "Token generation failed, why?.");
+        // Accept only one account per email.
+        if (await _userServices.EmailExistsAsync(user.Email))
+            return Conflict(new { message = "An account with this email already exists." });
 
-        return Ok(new
+        try
         {
-            message = "User registered successfully",
-            user,
-            token
-        });
+            await _userServices.CreateAsync(user);
+
+            var token = await _userServices.AuthenticateAsync(user.Email, user.Password);
+            if (token == null)
+                return StatusCode(500, "Token generation failed, why?.");
+
+            return Ok(new
+            {
+                message = "User registered successfully",
+                user,
+                token
+            });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            return StatusCode(500, "Internal server error");
+        }
     }
-    catch (Exception ex)
-    {
-        Console.WriteLine(ex);
-        return StatusCode(500, "Internal server error");
-    }
-}
 
     [HttpPost("login")]
-    public async Task<ActionResult<string>> Login([FromBody] LoginRequest loginRequest)
-    {
-        var token = await _userServices.AuthenticateAsync(loginRequest.Email, loginRequest.Password);
-        if (token == null)
-            return Unauthorized(new { message = "Invalid credentials" });
+    public async Task<ActionResult<object>> Login([FromBody] LoginRequest loginRequest)
+{
+    // Authenticate (checks email + password and returns JWT or null)
+    var token = await _userServices.AuthenticateAsync(loginRequest.Email, loginRequest.Password);
+    if (token == null)
+        return Unauthorized(new { message = "Invalid credentials" });
 
-        return Ok(new { token });
-    }
+    // Fetch the user so we can send the name back
+    var user = await _userServices.GetByEmailAsync(loginRequest.Email);
+    if (user == null)
+        return Unauthorized(new { message = "User not found" });
+
+    return Ok(new
+    {
+        token,
+        user = new
+        {
+            id = user.Id,
+            name = user.Name,
+            email = user.Email
+        }
+    });
+}
     public record LoginRequest(string Email, string Password);
 
 

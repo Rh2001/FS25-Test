@@ -27,8 +27,8 @@ namespace TestApp.Models
         [BsonElement("createdAt")]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        [BsonElement("age")]
-        public int Age { get; set; }
+        [BsonElement("dob")]
+        public DateTime? Dob { get; set; }
 
         [BsonElement("permissionLevel")]
         public int PermissionLevel { get; set; } = 0;    

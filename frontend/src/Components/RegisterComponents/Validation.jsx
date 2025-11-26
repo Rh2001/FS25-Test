@@ -1,3 +1,5 @@
+import React from "react";
+
 export const validateRegister = (f) => {
   const err = {};
   if (!f.name.trim()) err.name = "Name required";
@@ -9,6 +11,5 @@ export const validateRegister = (f) => {
   else if (f.confirmPassword !== f.password) err.confirmPassword = "No match";
   if (!f.phone.trim()) err.phone = "Phone required";
   if (!f.address.trim()) err.address = "Address required";
-  if (f.age && (Number(f.age) < 0 || Number(f.age) > 120)) err.age = "Invalid age";
   return err;
 };

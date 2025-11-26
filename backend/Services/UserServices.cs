@@ -20,9 +20,43 @@ namespace TestApp.Services
             _configuration = configuration;
         }
 
+        // New, check if email exists to catch multiple registrations with the same email.
+
+        public async Task<bool> EmailExistsAsync(string email)
+        {
+            var filter = Builders<User>.Filter.Eq(u => u.Email, email);
+            var count = await _userCollection.CountDocumentsAsync(filter);
+            return count > 0;
+        }
+
         // Create a new customer
         public async Task CreateAsync(User newUser) =>
             await _userCollection.InsertOneAsync(newUser);
+
+        public async Task<User?> GetByEmailAsync(string email) =>
+            await _userCollection.Find(u => u.Email == email).FirstOrDefaultAsync();
+            public string GenerateJwtForUser(User user)
+        {
+            var key = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var claims = new[]
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim("name", user.Name ?? string.Empty)
+            };
+
+            var token = new JwtSecurityToken(
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Audience"],
+                claims: claims,
+                expires: DateTime.UtcNow.AddHours(2),
+                signingCredentials: creds);
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
 
         // Get all customers
         public async Task<List<User>> GetAsyncUsers() =>

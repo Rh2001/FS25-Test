@@ -2,6 +2,9 @@
 // The upper half is the logic behind the scroll while the lower half is the rendering code. As the code is long, the comments only cover the scrolling logic parts and not the rendering code.
 // By Roham Harandifasih
 
+//To do, make the background more responsive for different screen sizes in the future.
+//Change REM to VH/VW for height values in the future for better responsiveness.
+
 import React, { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { sectionVariants } from "../GlobalFunctions/Variants"; 
