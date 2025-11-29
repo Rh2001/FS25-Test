@@ -107,7 +107,8 @@ public class UserController : ControllerBase
         {
             id = user.Id,
             name = user.Name,
-            email = user.Email
+            email = user.Email,
+            permissionLevel = user.PermissionLevel
         }
     });
 }

@@ -1,4 +1,3 @@
-// ...existing imports...
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -19,14 +18,17 @@ const LoginForm = () => {
     setError("");
 
     try {
-      const res = await fetch(`${process.env.REACT_APP_API_URL || "https://localhost:443"}/api/User/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: form.email,
-          password: form.password,
-        }),
-      });
+      const res = await fetch(
+        `${process.env.REACT_APP_API_URL || "https://localhost:443"}/api/User/login`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: form.email,
+            password: form.password,
+          }),
+        }
+      );
 
       const data = await res.json();
 
@@ -35,15 +37,23 @@ const LoginForm = () => {
         return;
       }
 
-      // Save token + username to localStorage
+      // Save token + username + permissionLevel to localStorage
       if (data.token) {
         localStorage.setItem("token", data.token);
       }
       if (data.user?.name) {
         localStorage.setItem("username", data.user.name);
       }
+      // store permissionLevel (default 0 if not present)
+      if (typeof data.user?.permissionLevel !== "undefined") {
+        localStorage.setItem(
+          "permissionLevel",
+          String(data.user.permissionLevel)
+        );
+      } else {
+        localStorage.setItem("permissionLevel", "0");
+      }
 
-      // Go back to homepage
       console.log("Login successful", localStorage.getItem("username"));
       navigate("/");
     } catch (err) {
@@ -76,7 +86,7 @@ const LoginForm = () => {
       >
         Login
       </button>
-        <div className="mt-2 text-center">
+      <div className="mt-2 text-center">
         <button
           type="button"
           onClick={() => navigate("/register")}
@@ -85,7 +95,6 @@ const LoginForm = () => {
           Not a bokhari yet? Register
         </button>
       </div>
-
     </form>
   );
 };
