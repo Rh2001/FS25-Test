@@ -21,7 +21,7 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <BrowserRouter> {/* App will be wrapped here */}
-    <ScrollToTop behavior = "auto"/>  {/* This is a bugfix to scroll to top after each routing*/}
+    <ScrollToTop behavior = "smooth"/>  {/* This is a bugfix to scroll to top after each routing*/}
     <div className="flex flex-col min-h-screen">            
         <Navbar />
         <main className="flex-1 min-h-0">    

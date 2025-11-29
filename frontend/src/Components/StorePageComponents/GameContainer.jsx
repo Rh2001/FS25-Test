@@ -1,8 +1,12 @@
-import {React} from "react";
+import {React, use} from "react";
 import {motion} from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import { sectionVariants, containerVariants, gameCardVariants } from "../GlobalFunctions/Variants";
 
+
+
 const GameContainer = ({ title, games = [] }) => {
+  const navigate = useNavigate();
   if (!games.length) return null;
 
   return (
@@ -60,6 +64,9 @@ const GameContainer = ({ title, games = [] }) => {
                   className="bg-gradient-to-r from-sky-500 to-cyan-500 text-black 
                              font-semibold px-4 py-2 rounded-md shadow-sm 
                              hover:shadow-sky-500/30 transition"
+                              onClick={() =>
+                    navigate(`/store/${game.id || game._id || ""}`)
+                  }
                 >
                   Buy Now
                 </motion.button>

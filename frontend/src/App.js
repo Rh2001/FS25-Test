@@ -7,11 +7,6 @@ import { useEffect } from 'react';
 import AppRoutes from './AppRoutes';
 
 function App() {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    localStorage.setItem("isLoggedIn", false);
-    //setIsLoggedIn(localStorage.getItem("isLoggedIn") === "true");
-
- 
   return (
     <div className="bg-gray-900 min-h-screen">
       <Routes>
@@ -20,11 +15,6 @@ function App() {
           return <Route key={index} {...rest} element={element} />;
 
         })}
-
-
-
-        {/*<Route path="/" element={<HomePage />} />
-        <Route path="/login" element={<Login />} />*/}
       </Routes>
     </div>
   );

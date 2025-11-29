@@ -156,8 +156,9 @@ const GamesHolder = ({ title = "Featured", games = [] }) => {
                         whileTap={{ scale: 1.55 }}
                         transition={{ type: "spring", stiffness: 100, damping: 55 }}
                         className="bg-white text-black font-semibold px-5 py-3 rounded-md shadow-sm transition-all duration-200 hover:bg-gradient-to-r hover:from-sky-400 hover:to-cyan-500 hover:text-black focus:outline-none focus:ring-2 focus:ring-sky-400"
-                       // onClick={() => window.location.href = `/store/game/${game.id || game._id || ""}`} // Redirect to the game's page full reload.
-                        onClick={() => navigate(`/store/game/${game.id || game._id || ""}`)} // Redirect to the game's page without full reload.
+                      
+                        onClick={() => navigate(`/store/${game.id || game._id || ""}`)} // Redirect to the game's page without full reload.
+                        
                       >
                               Buy Now
                       </motion.button>

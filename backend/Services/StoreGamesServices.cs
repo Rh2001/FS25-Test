@@ -17,6 +17,10 @@ namespace TestApp.Models
         // Get all store games
         public async Task<List<StoreGames>> GetAsyncStoreGames() =>
             await _storeGamesCollection.Find(_ => true).ToListAsync();
+
+        // Get a store game by its ID
+        public async Task<StoreGames?> GetByIdAsync(string id) =>
+            await _storeGamesCollection.Find(g => g.Id == id).FirstOrDefaultAsync();
     }
 
 }

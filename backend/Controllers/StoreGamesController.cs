@@ -44,4 +44,24 @@ public class StoreGamesController : ControllerBase
             return StatusCode(500, "Internal server error");
         }
     }
+
+    // Get a store game by its ID 
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<StoreGames>> GetById(string id)
+    {
+        try
+        {
+            var game = await _storeGamesServices.GetByIdAsync(id);
+            if (game == null)
+                return NotFound();
+
+            return game;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred while fetching store game by id: {ex.Message}");
+            return StatusCode(500, "Internal server error");
+        }
+    }
 }
