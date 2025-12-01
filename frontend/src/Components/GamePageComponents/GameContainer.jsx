@@ -38,20 +38,49 @@ const GamePage = () => {
     fetchGame();
   }, [id]);
 
-  const handleBuyNow = () => {
+  const handleBuyNow = async () => {
     const token = localStorage.getItem("token");
     if (!token) {
       setShowLoginPrompt(true);
       return;
     }
 
-    // Todo: Implement actual purchase logic here
-    alert(`Buying: ${game.title}`);
+    if (!game) return;
+
+    const gameId = game.id || game._id || id;
+    if (!gameId) return;
+
+    try {
+      const res = await fetch(`${API_BASE}/api/user/purchases`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ gameId }),
+      });
+
+      if (!res.ok) {
+        console.error("Failed to record purchase");
+        return;
+      }
+
+      // on success: go to profile (library)
+      navigate("/profile");
+      if (typeof window !== "undefined") {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const handleGoToLogin = () => {
     setShowLoginPrompt(false);
     navigate("/login");
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
 
   if (loading) {
@@ -64,7 +93,12 @@ const GamePage = () => {
         {error}
         <div className="mt-4">
           <button
-            onClick={() => navigate("/store")}
+            onClick={() => {
+              navigate("/store");
+              if (typeof window !== "undefined") {
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }
+            }}
             className="px-4 py-2 rounded-md bg-purple-600 hover:bg-purple-700 text-white text-sm"
           >
             Back to Store
@@ -93,7 +127,12 @@ const GamePage = () => {
       {/* Foreground content */}
       <div className="relative z-10 p-6 pt-20">
         <button
-          onClick={() => navigate(-1)}
+          onClick={() => {
+            navigate(-1);
+            if (typeof window !== "undefined") {
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }
+          }}
           className="mt-4 mb-4 px-3 py-1 rounded-md bg-gray-800/80 hover:bg-gray-700 text-sm"
         >
           ← Back
@@ -118,7 +157,9 @@ const GamePage = () => {
 
             <div className="flex items-center justify-between mb-6">
               <span className="text-2xl font-bold text-sky-400">
-                {game.price}
+                {typeof game.price === "number"
+                  ? `$${game.price.toFixed(2)}`
+                  : game.price}
               </span>
               {game.store && (
                 <span className="text-xs px-3 py-1 rounded-full bg-gray-800 text-gray-200">
@@ -137,7 +178,7 @@ const GamePage = () => {
         </div>
       </div>
 
-      {/* Login prompt component, it is a separate file */}
+      {/* Login prompt component */}
       <GameLoginPrompt
         open={showLoginPrompt}
         gameTitle={game.title}

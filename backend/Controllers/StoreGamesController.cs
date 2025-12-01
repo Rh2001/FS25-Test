@@ -64,4 +64,6 @@ public class StoreGamesController : ControllerBase
             return StatusCode(500, "Internal server error");
         }
     }
+
+    
 }

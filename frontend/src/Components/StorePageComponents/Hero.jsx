@@ -47,15 +47,7 @@ function Hero() {
           <p className="text-gray-300 mb-8 text-lg leading-relaxed">
             Explore the best digital game deals — instant, secure, and built for gamers.
           </p>
-          <motion.button
-            onClick={() => navigate("/store")}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="bg-gradient-to-r from-sky-500 to-cyan-500 text-black px-6 py-3 
-                       font-bold rounded-md hover:opacity-90 transition"
-          >
-            Browse Store
-          </motion.button>
+       
 
           {/* YouTube Video just below the button */}
           <div className="mt-6 w-full flex justify-center">

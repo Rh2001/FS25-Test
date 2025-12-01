@@ -1,75 +1,179 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import GameLoginPrompt from "../GamePageComponents/GameLoginPrompt";
 
-export default function GamePage() {
+const API_BASE = process.env.REACT_APP_API_URL || "https://localhost:443";
+
+const GamePage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [game, setGame] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
 
   useEffect(() => {
-    if (!id) return;
-    const base = process.env.REACT_APP_API_BASE || ""; // or use proxy
-    const fetchUrl = `${base}/api/store-games/${id}`; // adjust endpoint to match your backend
-    let mounted = true;
-    setLoading(true);
-    fetch(fetchUrl)
-      .then((res) => {
-        if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
-        return res.json();
-      })
-      .then((data) => mounted && setGame(data))
-      .catch((err) => mounted && setError(err.message || "Failed to load"))
-      .finally(() => mounted && setLoading(false));
-    return () => (mounted = false);
+    const fetchGame = async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        const res = await fetch(`${API_BASE}/api/store-games/${id}`);
+        if (!res.ok) {
+          if (res.status === 404) {
+            setError("Game not found.");
+          } else {
+            setError("Failed to load game.");
+          }
+          return;
+        }
+
+        const data = await res.json();
+        setGame(data);
+      } catch {
+        setError("Failed to load game.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchGame();
   }, [id]);
 
-  if (loading) return <div className="text-center py-20">Loading...</div>;
-  if (error) return <div className="text-center py-20 text-red-400">Error: {error}</div>;
-  if (!game) return <div className="text-center py-20">Game not found</div>;
+  const handleBuyNow = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setShowLoginPrompt(true);
+      return;
+    }
+
+    if (!game?.id && !game?._id && !id) return;
+
+    try {
+      const res = await fetch(`${API_BASE}/api/user/purchases`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ gameId: game.id || game._id || id }),
+      });
+
+      if (!res.ok) {
+        console.error("Failed to record purchase");
+        return;
+      }
+
+      navigate("/profile");
+      if (typeof window !== "undefined") {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleGoToLogin = () => {
+    setShowLoginPrompt(false);
+    navigate("/login");
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  if (loading) {
+    return <div className="p-8 text-center text-white">Loading game…</div>;
+  }
+
+  if (error) {
+    return (
+      <div className="p-8 text-center text-red-400">
+        {error}
+        <div className="mt-4">
+          <button
+            onClick={() => {
+              navigate("/store");
+              if (typeof window !== "undefined") {
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }
+            }}
+            className="px-4 py-2 rounded-md bg-purple-600 hover:bg-purple-700 text-white text-sm"
+          >
+            Back to Store
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!game) return null;
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-12">
-      <button onClick={() => navigate(-1)} className="mb-6 text-sm text-white/80 hover:text-sky-400">
-        ← Back
-      </button>
+    <main className="relative min-h-screen bg-gray-950 text-white overflow-hidden">
+      {/* ...existing layout / background / content... */}
+      <div className="relative z-10 p-6 pt-20">
+        <button
+          onClick={() => {
+            navigate(-1);
+            if (typeof window !== "undefined") {
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }
+          }}
+          className="mt-4 mb-4 px-3 py-1 rounded-md bg-gray-800/80 hover:bg-gray-700 text-sm"
+        >
+          ← Back
+        </button>
 
-      <div className="bg-[#0b1117] rounded-2xl overflow-hidden shadow-lg">
-        <div className="md:flex">
-          <div className="md:w-1/2">
-            <img
-              src={game.imageUrl || game.image || "/placeholder.png"}
-              alt={game.title || game.name}
-              className="w-full h-80 md:h-full object-cover"
-            />
-          </div>
+        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-8 bg-gray-900/85 rounded-2xl p-6 shadow-2xl border border-white/5 backdrop-blur-md">
+          {/* left: image */}
+          <img
+            src={game.imageUrl}
+            alt={game.title}
+            className="w-full h-72 object-cover rounded-xl shadow-lg"
+          />
 
-          <div className="p-6 md:w-1/2">
-            <h1 className="text-2xl md:text-3xl font-bold mb-3">{game.title || game.name}</h1>
-            <p className="text-sky-400 text-xl font-semibold mb-4">
-              {typeof game.price === "number" ? `$${game.price.toFixed(2)}` : `$${game.price ?? "N/A"}`}
-            </p>
-            <p className="text-gray-300 mb-6">{game.description || game.summary || "No description available."}</p>
+          {/* right: info */}
+          <div>
+            <h1 className="text-3xl font-extrabold mb-2">{game.title}</h1>
+            <p className="text-sm text-gray-300 mb-1">{game.genre}</p>
+            {game.platform && (
+              <p className="text-xs text-gray-400 mb-4">
+                Platform: {game.platform}
+              </p>
+            )}
+            <p className="text-gray-200 mb-6">{game.description}</p>
 
-            <div className="flex gap-3">
-              <button
-                onClick={() => navigate(`/checkout/${id}`)}
-                className="px-5 py-3 bg-gradient-to-r from-sky-400 to-cyan-400 text-black font-semibold rounded-md hover:scale-102 transition transform"
-              >
-                Buy Now
-              </button>
-
-              <button
-                onClick={() => navigate("/store")}
-                className="px-4 py-3 border border-white/10 text-white rounded-md hover:text-sky-400 transition"
-              >
-                Back to Store
-              </button>
+            <div className="flex items-center justify-between mb-6">
+              <span className="text-2xl font-bold text-sky-400">
+                {typeof game.price === "number"
+                  ? `$${game.price.toFixed(2)}`
+                  : game.price}
+              </span>
+              {game.store && (
+                <span className="text-xs px-3 py-1 rounded-full bg-gray-800 text-gray-200">
+                  {game.store}
+                </span>
+              )}
             </div>
+
+            <button
+              className="w-full py-3 rounded-md bg-purple-600 hover:bg-purple-700 font-semibold"
+              onClick={handleBuyNow}
+            >
+              Buy Now
+            </button>
           </div>
         </div>
       </div>
-    </div>
+
+      <GameLoginPrompt
+        open={showLoginPrompt}
+        gameTitle={game.title}
+        onCancel={() => setShowLoginPrompt(false)}
+        onConfirm={handleGoToLogin}
+      />
+    </main>
   );
-}
+};
+
+export default GamePage;

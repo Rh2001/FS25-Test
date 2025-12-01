@@ -31,7 +31,10 @@ namespace TestApp.Models
         public DateTime? Dob { get; set; }
 
         [BsonElement("permissionLevel")]
-        public int PermissionLevel { get; set; } = 0;    
+        public int PermissionLevel { get; set; } = 0;   
+
+        [BsonElement("purchasedGameIds")]
+        public List<string> PurchasedGameIds { get; set; } = new List<string>(); 
 
     }
 }
