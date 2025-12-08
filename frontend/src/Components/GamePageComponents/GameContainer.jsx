@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import GameLoginPrompt from "./GameLoginPrompt";
+import GamePurchasePrompt from "./GamePurchasePrompt";
 
-const API_BASE = process.env.REACT_APP_API_URL || "https://localhost:443"; // Either use env variable or default to localhost if none is found
+const API_BASE = process.env.REACT_APP_API_URL || "https://localhost:443";
 
 const GamePage = () => {
   const { id } = useParams();
@@ -11,6 +12,7 @@ const GamePage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+  const [showPurchasePrompt, setShowPurchasePrompt] = useState(false);
 
   useEffect(() => {
     const fetchGame = async () => {
@@ -65,11 +67,7 @@ const GamePage = () => {
         return;
       }
 
-      // on success: go to profile (library)
-      navigate("/profile");
-      if (typeof window !== "undefined") {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
+      setShowPurchasePrompt(true);
     } catch (e) {
       console.error(e);
     }
@@ -78,6 +76,22 @@ const GamePage = () => {
   const handleGoToLogin = () => {
     setShowLoginPrompt(false);
     navigate("/login");
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  const handleGoToProfile = () => {
+    setShowPurchasePrompt(false);
+    navigate("/profile");
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  const handleGoToStore = () => {
+    setShowPurchasePrompt(false);
+    navigate("/store");
     if (typeof window !== "undefined") {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
@@ -112,7 +126,6 @@ const GamePage = () => {
 
   return (
     <main className="relative min-h-screen bg-gray-950 text-white overflow-hidden">
-      {/* Background image / gradient */}
       <div className="pointer-events-none absolute inset-0">
         {game.imageUrl && (
           <img
@@ -124,7 +137,6 @@ const GamePage = () => {
         <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/70 to-black/90" />
       </div>
 
-      {/* Foreground content */}
       <div className="relative z-10 p-6 pt-20">
         <button
           onClick={() => {
@@ -178,12 +190,18 @@ const GamePage = () => {
         </div>
       </div>
 
-      {/* Login prompt component */}
       <GameLoginPrompt
         open={showLoginPrompt}
         gameTitle={game.title}
         onCancel={() => setShowLoginPrompt(false)}
         onConfirm={handleGoToLogin}
+      />
+
+      <GamePurchasePrompt
+        open={showPurchasePrompt}
+        gameTitle={game.title}
+        onGoToProfile={handleGoToProfile}
+        onGoToStore={handleGoToStore}
       />
     </main>
   );
