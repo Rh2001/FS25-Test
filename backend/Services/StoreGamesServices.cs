@@ -42,6 +42,11 @@ namespace TestApp.Models
             return await _storeGamesCollection.Find(filter).ToListAsync();
 
         }
+        public async Task CreateAsync(StoreGames newStoreGame) => // Add a new store game
+            await _storeGamesCollection.InsertOneAsync(newStoreGame);
+
+        public async Task DeleteAsync(string id) =>  // Delete a store game
+            await _storeGamesCollection.DeleteOneAsync(x => x.Id == id);
     }
 
 }

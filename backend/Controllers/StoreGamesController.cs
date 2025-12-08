@@ -1,6 +1,7 @@
 using TestApp.Services;
 using TestApp.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 [ApiController]
 [Route("api/store-games")]
@@ -23,7 +24,7 @@ public class StoreGamesController : ControllerBase
         }
     }
     
-    // GET: api/store-games
+    // GET Request to api/store-games
     [HttpGet]
     public async Task<ActionResult<List<StoreGames>>> Get()
     {
@@ -63,6 +64,39 @@ public class StoreGamesController : ControllerBase
             Console.WriteLine($"An error occurred while fetching store game by id: {ex.Message}");
             return StatusCode(500, "Internal server error");
         }
+    }
+
+    [Authorize]
+    [HttpPost]
+    public async Task<IActionResult> Post([FromBody] StoreGames newGame)
+    {
+        // Very simple permissionclaim check
+        var permissionClaim = User.FindFirst("permissionLevel");
+        if (permissionClaim == null || permissionClaim.Value != "1")
+            return Forbid();
+
+        if (newGame == null)
+            return BadRequest("Game cannot be null.");
+
+        await _storeGamesServices.CreateAsync(newGame);
+        return CreatedAtAction(nameof(GetById), new { id = newGame.Id }, newGame);
+    }
+
+    // Delete game from: api/store-games/{id} (This is for admins only)
+    [Authorize]
+    [HttpDelete("{id:length(24)}")]
+    public async Task<IActionResult> Delete(string id)
+    {
+        var permissionClaim = User.FindFirst("permissionLevel");
+        if (permissionClaim == null || permissionClaim.Value != "1")
+            return Forbid();
+
+        var existing = await _storeGamesServices.GetByIdAsync(id);
+        if (existing == null)
+            return NotFound();
+
+        await _storeGamesServices.DeleteAsync(id);
+        return NoContent();
     }
 
     

@@ -1,6 +1,10 @@
 using TestApp.Services;
 using TestApp.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+
+namespace TestApp.Controllers
+{
 
 [ApiController]
 [Route("api/featured-games")]
@@ -30,13 +34,9 @@ public class FeaturedGamesController : ControllerBase
         try
         {
             var featuredGames = await _featuredGamesServices.GetAsyncFeaturedGames();
+            featuredGames ??= new List<FeaturedGames>();
+            return Ok(featuredGames);
 
-            if (featuredGames == null || featuredGames.Count == 0)
-            {
-                return NotFound();
-            }
-            Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(featuredGames));
-            return featuredGames;
         }
         catch (Exception ex)
         {
@@ -45,11 +45,39 @@ public class FeaturedGamesController : ControllerBase
         }
     }
 
-    // POST: api/featured-games
+    // Post Request to api/featured-games for admins only
+    [Authorize]
     [HttpPost]
-    public async Task<IActionResult> Post(FeaturedGames newFeaturedGame)
+    public async Task<IActionResult> Post([FromBody] FeaturedGames newFeaturedGame)
     {
+        var permissionClaim = User.FindFirst("permissionLevel");
+        if (permissionClaim == null || permissionClaim.Value != "1")
+            return Forbid();
+
+        if (newFeaturedGame == null)
+            return BadRequest("Game cannot be null.");
+
         await _featuredGamesServices.CreateAsync(newFeaturedGame);
         return CreatedAtAction(nameof(Get), new { id = newFeaturedGame.Id }, newFeaturedGame);
     }
+
+    // DELETE request to api/featured-games/{id} for admins only, uses authorize to ensure only authorized users can delete
+    [Authorize]
+    [HttpDelete("{id:length(24)}")]
+    public async Task<IActionResult> Delete(string id)
+    {
+        var permissionClaim = User.FindFirst("permissionLevel");
+        if (permissionClaim == null || permissionClaim.Value != "1")
+            return Forbid();
+
+        
+        var all = await _featuredGamesServices.GetAsyncFeaturedGames();
+        var existing = all.FirstOrDefault(g => g.Id == id);
+        if (existing == null)
+            return NotFound();
+
+        //await _featuredGamesServices.DeleteAsync(id);
+        return NoContent();
+    }
+}
 }

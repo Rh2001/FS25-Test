@@ -4,6 +4,7 @@ import AstroMan from "./Components/AstroMan";
 import GamePage from "./Components/GamePage";
 import HomePage from "./Components/HomePage";
 import Login from "./Components/Login";
+import GameManagement from "./Components/ProfileComponents/GameManagement";
 import ProfilePage from "./Components/ProfilePage";
 import Register from "./Components/Register";
 import StorePage from "./Components/StorePage";
@@ -43,6 +44,10 @@ const AppRoutes = [
     {
         path: "/profile",
         element: <ProfilePage/>
+    },
+    {
+        path: "/admin/games",
+        element: <GameManagement/>
     }
 
 ]

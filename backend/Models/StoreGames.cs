@@ -7,7 +7,7 @@ namespace TestApp.Models
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; } = null!;
+        public string? Id { get; set; } = null!;
 
         [BsonElement("title")]
         public string Title { get; set; } = null!;
@@ -18,7 +18,7 @@ namespace TestApp.Models
         [BsonElement("imageUrl")]
         public string ImageUrl { get; set; } = null!;
         [BsonElement("price")]
-        public string Price { get; set; }
+        public string? Price { get; set; }
 
         [BsonElement("genre")]
         public string Genre { get; set; } = null!;
