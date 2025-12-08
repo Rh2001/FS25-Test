@@ -1,21 +1,18 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { sectionVariants, containerVariants, gameCardVariants } from "../GlobalFunctions/Variants";
 
 const ProfilePurchases = ({
   loadingPurchases,
   purchaseError,
   purchased,
 }) => {
-  const navigate = useNavigate();
-
   return (
     <motion.section
       className="mb-10"
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.3 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
+      variants={sectionVariants}
+      initial="hidden"
+      animate="visible"
     >
       <h2 className="text-xl font-bold mb-3">Your Purchases</h2>
 
@@ -35,47 +32,46 @@ const ProfilePurchases = ({
           </div>
         )}
 
-      <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {purchased.map((g, index) => (
-          <motion.article
-            key={g.id || index}
-            className="bg-gray-900/80 border border-gray-800 rounded-2xl p-4 overflow-hidden"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{
-              duration: 0.4,
-              ease: "easeOut",
-              delay: index * 0.05,
-            }}
-          >
-            {g.imageUrl && (
-              <img
-                src={g.imageUrl}
-                alt={g.title}
-                className="w-full h-36 object-cover rounded-lg mb-3"
-              />
-            )}
-            <h3 className="text-lg font-semibold">{g.title}</h3>
-            {g.genre && (
-              <p className="text-xs text-gray-400 mb-3">{g.genre}</p>
-            )}
-            <div className="flex items-center justify-between">
-              <span className="text-sky-400 font-bold">
-                {typeof g.price === "number"
-                  ? `$${g.price.toFixed(2)}`
-                  : g.price}
-              </span>
-              <button
-                className="text-sm px-3 py-1 rounded-md bg-gray-800 hover:bg-gray-700"
-                onClick={() => navigate(`/store/${g.id}`)}
-              >
-                View
-              </button>
-            </div>
-          </motion.article>
-        ))}
-      </div>
+      {purchased.length > 0 && (
+        <motion.div
+          className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          {purchased.map((g, index) => (
+            <motion.article
+              key={g.id || index}
+              variants={gameCardVariants}
+              initial="false"
+              whileHover={{ scale: 1.04, rotateY: 3 }}
+              transition={{ type: "spring", stiffness: 0, damping: 10 }}
+              className="bg-slate-900/80 border border-slate-700/80 rounded-2xl p-4 overflow-hidden shadow-[0_18px_45px_rgba(15,23,42,0.95)]"
+            >
+              {g.imageUrl && (
+                <img
+                  src={g.imageUrl}
+                  alt={g.title}
+                  className="w-full h-36 object-cover rounded-lg mb-3"
+                />
+              )}
+              <h3 className="text-lg font-semibold text-slate-50">
+                {g.title}
+              </h3>
+              {g.genre && (
+                <p className="text-xs text-slate-400 mb-3">{g.genre}</p>
+              )}
+              <div className="flex items-center justify-between">
+                <span className="text-sky-300 font-bold">
+                  {typeof g.price === "number"
+                    ? `$${g.price.toFixed(2)}`
+                    : g.price}
+                </span>
+              </div>
+            </motion.article>
+          ))}
+        </motion.div>
+      )}
     </motion.section>
   );
 };
