@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options; // To be able to fetch options from appsettings.json
 using MongoDB.Driver;
 using TestApp.Models;
@@ -21,5 +22,16 @@ namespace TestApp.Services
         // Get all featured games
         public async Task<List<FeaturedGames>> GetAsyncFeaturedGames() =>
             await _featuredGamesCollection.Find(_ => true).ToListAsync();
+        public async Task DeleteAsync(string id) =>  // Delete a featured game
+            await _featuredGamesCollection.DeleteOneAsync(x => x.Id == id);
+
+        
+        
+
+
+            
+
+
+        
     }
 }
