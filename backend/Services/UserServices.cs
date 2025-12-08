@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
+using BCrypt.Net; // For password hashing
 using TestApp.Models;
 
 namespace TestApp.Services
@@ -80,7 +81,10 @@ namespace TestApp.Services
         {
             var user = await _userCollection.Find(u => u.Email == email).FirstOrDefaultAsync();
             if (user == null) return null;
-            if (user.Password != password) return null; // replace with proper hashing later
+
+            // Compare hash instead of plain text, encryption of password
+            var valid = BCrypt.Net.BCrypt.Verify(password, user.PasswordHash); // Use PasswordHash for verification
+            if (!valid) return null;
 
             var jwtSection = _configuration.GetSection("JWTSettings");
             var keyString = jwtSection.GetValue<string>("SecretKey") ?? throw new InvalidOperationException("JWTSettings:SecretKey is not configured");

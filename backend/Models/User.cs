@@ -13,7 +13,7 @@ namespace TestApp.Models
         public string Name { get; set; } = null!;
 
         [BsonElement("password")]
-        public string Password { get; set; } = null!;
+        public string PasswordHash { get; set; } = null!;
 
         [BsonElement("email")]
         public string Email { get; set; } = null!;

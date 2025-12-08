@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "mw7rR6OQsjM=",
+  "dgSpecHash": "5C1hyZ1rtTs=",
   "success": true,
   "projectFilePath": "D:\\FS25 Test\\backend\\TestApp.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\roori\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",
     "C:\\Users\\roori\\.nuget\\packages\\dnsclient\\1.6.1\\dnsclient.1.6.1.nupkg.sha512",
     "C:\\Users\\roori\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\9.0.10\\microsoft.aspnetcore.authentication.jwtbearer.9.0.10.nupkg.sha512",
     "C:\\Users\\roori\\.nuget\\packages\\microsoft.extensions.apidescription.server\\9.0.0\\microsoft.extensions.apidescription.server.9.0.0.nupkg.sha512",

@@ -1,6 +1,5 @@
-/* uses authorizatoin when accessing user data*/
-
 using System.Security.Claims;
+using BCrypt.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TestApp.Models;
@@ -17,47 +16,71 @@ namespace TestApp.Controllers
 
         public UserController(UserServices userServices, StoreGamesServices storeGamesServices)
         {
-            _userServices = userServices ?? throw new ArgumentNullException(nameof(userServices)); // Added null check
-            _storeGamesServices = storeGamesServices ?? throw new ArgumentNullException(nameof(storeGamesServices)); // Added null check
+            _userServices = userServices ?? throw new ArgumentNullException(nameof(userServices));
+            _storeGamesServices = storeGamesServices ?? throw new ArgumentNullException(nameof(storeGamesServices));
         }
 
-        [HttpGet("protected")]
-        [Authorize]
-        public async Task<ActionResult<List<User>>> Get()
-        {
-            try
-            {
-                var users = await _userServices.GetAsyncUsers();
-                if (users == null || users.Count == 0)
-                    return NotFound();
+        public record RegisterRequest(
+            string Name,
+            string Email,
+            string Password,
+            string Phone,
+            string Address,
+            DateTime? Dob
+        );
 
-                return users;
-            }
-            catch (Exception ex)
+        public record LoginRequest(string Email, string Password);
+
+        [HttpGet]
+        public async Task<ActionResult<List<User>>> GetUsers()
+        {
+            var userList = await _userServices.GetAsyncUsers();
+            return Ok(userList);
+        }
+
+        [HttpGet("{id:length(24)}")]
+        public async Task<ActionResult<User>> GetCustomerByIdUsingPath(string id)
+        {
+            var user = await _userServices.GetAsync(id);
+            if (user is null)
             {
-                Console.WriteLine($"An error occurred while fetching users: {ex.Message}");
-                return StatusCode(500, "Internal server error");
+                return NotFound("Customer not found");
             }
+
+            return Ok(user);
         }
 
         [HttpPost]
-        public async Task<ActionResult<object>> Register([FromBody] User user)
+        public async Task<ActionResult<object>> Register([FromBody] RegisterRequest request)
         {
-            if (user == null)
+            if (request == null)
                 return BadRequest("User cannot be empty.");
 
-            if (string.IsNullOrWhiteSpace(user.Email))
+            if (string.IsNullOrWhiteSpace(request.Email))
                 return BadRequest(new { message = "Email is required." });
 
-            // Accept only one account per email.
-            if (await _userServices.EmailExistsAsync(user.Email))
+            if (string.IsNullOrWhiteSpace(request.Password))
+                return BadRequest(new { message = "Password is required." });
+
+            if (await _userServices.EmailExistsAsync(request.Email))
                 return Conflict(new { message = "An account with this email already exists." });
 
             try
             {
+                var user = new User
+                {
+                    Name = request.Name,
+                    Email = request.Email,
+                    Phone = request.Phone,
+                    Address = request.Address,
+                    Dob = request.Dob,
+                    PermissionLevel = 0,
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password)
+                };
+
                 await _userServices.CreateAsync(user);
 
-                var token = await _userServices.AuthenticateAsync(user.Email, user.Password);
+                var token = await _userServices.AuthenticateAsync(request.Email, request.Password);
                 if (token == null)
                     return StatusCode(500, "Token generation failed.");
 
@@ -75,9 +98,8 @@ namespace TestApp.Controllers
                     token
                 });
             }
-            catch (Exception ex)
+            catch
             {
-                Console.WriteLine(ex);
                 return StatusCode(500, "Internal server error");
             }
         }
@@ -107,31 +129,47 @@ namespace TestApp.Controllers
             });
         }
 
-        // Add a purchased gameId for the current user
+        [Authorize]
+        [HttpGet("me")]
+        public async Task<ActionResult<object>> GetMe()
+        {
+            var userId = await ResolveUserIdAsync();
+            if (string.IsNullOrWhiteSpace(userId))
+                return Unauthorized();
+
+            var user = await _userServices.GetByIdAsync(userId);
+            if (user == null) return NotFound();
+
+            return Ok(new
+            {
+                id = user.Id,
+                name = user.Name,
+                email = user.Email,
+                permissionLevel = user.PermissionLevel,
+                purchasedGameIds = user.PurchasedGameIds ?? new List<string>()
+            });
+        }
+
         [Authorize]
         [HttpPost("purchases")]
         public async Task<ActionResult> AddPurchase([FromBody] AddPurchaseRequest request)
         {
-            if (string.IsNullOrWhiteSpace(request.GameId)) // Missing gameId.
+            if (request == null || string.IsNullOrWhiteSpace(request.GameId))
                 return BadRequest(new { message = "GameId is required." });
 
-            var userId = await ResolveUserIdAsync(); // Call resolve method
-            if (string.IsNullOrWhiteSpace(userId)) // Missing userId.
+            var userId = await ResolveUserIdAsync();
+            if (string.IsNullOrWhiteSpace(userId))
                 return Unauthorized(new { message = "Invalid or missing user id." });
 
-            // Verify that the game exists
-            var game = await _storeGamesServices.GetByIdAsync(request.GameId);
-            if (game == null)
-                return NotFound(new { message = "Game not found." });
+            var success = await _userServices.AddPurchaseAsync(userId, request.GameId);
+            if (!success)
+                return StatusCode(500, new { message = "Failed to add purchase." });
 
-            var result = await _userServices.AddPurchaseAsync(userId, request.GameId);
-            if (!result)
-                return BadRequest(new { message = "Could not add purchase." });
-
-            return Ok(new { message = "Purchase added to database." });
+            return Ok(new { message = "Purchase added successfully." });
         }
 
-        // Get StoreGames objects for the current user's purchases, requires authorization for access
+        public record AddPurchaseRequest(string GameId);
+
         [Authorize]
         [HttpGet("purchases")]
         public async Task<ActionResult<IEnumerable<StoreGames>>> GetPurchases()
@@ -144,36 +182,28 @@ namespace TestApp.Controllers
             if (user == null)
                 return NotFound(new { message = "User not found" });
 
-            var games = await _storeGamesServices.GetByIdsAsync(user.PurchasedGameIds ?? new List<string>());
+            var gameIds = user.PurchasedGameIds ?? new List<string>();
+            if (!gameIds.Any())
+                return Ok(Array.Empty<StoreGames>());
+
+            var games = await _storeGamesServices.GetByIdsAsync(gameIds);
             return Ok(games);
         }
 
-
-
         private async Task<string?> ResolveUserIdAsync()
         {
-            // Try direct id claims first
-            var id = User.FindFirstValue("id")
-                     ?? User.FindFirstValue(ClaimTypes.NameIdentifier)
-                     ?? User.FindFirstValue(ClaimTypes.Sid);
+            var idClaim = User.FindFirst("id");
+            if (idClaim != null && !string.IsNullOrWhiteSpace(idClaim.Value))
+            {
+                return idClaim.Value;
+            }
 
-            if (!string.IsNullOrWhiteSpace(id))
-                return id;
-
-            // Resolve from email(should not be called under normal circumstances)
-            var email = User.FindFirstValue(ClaimTypes.Email) ?? User.FindFirstValue("email");
-            if (string.IsNullOrWhiteSpace(email))
+            var emailClaim = User.FindFirst(ClaimTypes.Email) ?? User.FindFirst("email");
+            if (emailClaim == null || string.IsNullOrWhiteSpace(emailClaim.Value))
                 return null;
 
-            var user = await _userServices.GetByEmailAsync(email);
+            var user = await _userServices.GetByEmailAsync(emailClaim.Value);
             return user?.Id;
-        }
-
-        public record LoginRequest(string Email, string Password); // Record type for login request.
-
-        public class AddPurchaseRequest
-        {
-            public string GameId { get; set; } = string.Empty;
         }
     }
 }
