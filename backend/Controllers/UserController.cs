@@ -17,8 +17,8 @@ namespace TestApp.Controllers
 
         public UserController(UserServices userServices, StoreGamesServices storeGamesServices)
         {
-            _userServices = userServices ?? throw new ArgumentNullException(nameof(userServices));
-            _storeGamesServices = storeGamesServices ?? throw new ArgumentNullException(nameof(storeGamesServices));
+            _userServices = userServices ?? throw new ArgumentNullException(nameof(userServices)); // Added null check
+            _storeGamesServices = storeGamesServices ?? throw new ArgumentNullException(nameof(storeGamesServices)); // Added null check
         }
 
         [HttpGet("protected")]
@@ -131,7 +131,7 @@ namespace TestApp.Controllers
             return Ok(new { message = "Purchase added to database." });
         }
 
-        // Get StoreGames objects for the current user's purchases
+        // Get StoreGames objects for the current user's purchases, requires authorization for access
         [Authorize]
         [HttpGet("purchases")]
         public async Task<ActionResult<IEnumerable<StoreGames>>> GetPurchases()
@@ -152,7 +152,7 @@ namespace TestApp.Controllers
 
         private async Task<string?> ResolveUserIdAsync()
         {
-            // Try direct id claim
+            // Try direct id claims first
             var id = User.FindFirstValue("id")
                      ?? User.FindFirstValue(ClaimTypes.NameIdentifier)
                      ?? User.FindFirstValue(ClaimTypes.Sid);
@@ -169,7 +169,7 @@ namespace TestApp.Controllers
             return user?.Id;
         }
 
-        public record LoginRequest(string Email, string Password);
+        public record LoginRequest(string Email, string Password); // Record type for login request.
 
         public class AddPurchaseRequest
         {

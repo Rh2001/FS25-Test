@@ -39,7 +39,7 @@ namespace TestApp.Services
         public async Task<User?> GetByEmailAsync(string email) =>
             await _userCollection.Find(u => u.Email == email).FirstOrDefaultAsync();
 
-        // Legacy JWT generator (if you still use this anywhere)
+        
         public string GenerateJwtForUser(User user)
         {
             var keyString = _configuration["Jwt:Key"] ?? throw new InvalidOperationException("Jwt:Key is not configured");
