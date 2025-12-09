@@ -76,7 +76,7 @@ public class FeaturedGamesController : ControllerBase
         if (existing == null)
             return NotFound();
 
-        //await _featuredGamesServices.DeleteAsync(id);
+        await _featuredGamesServices.DeleteAsync(id);
         return NoContent();
     }
 }

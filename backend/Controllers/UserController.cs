@@ -205,5 +205,31 @@ namespace TestApp.Controllers
             var user = await _userServices.GetByEmailAsync(emailClaim.Value);
             return user?.Id;
         }
+
+        [Authorize]
+        [HttpDelete("{id:length(24)}")]
+        public async Task<IActionResult> DeleteUser(string id)
+        {
+            var currentUserId = await ResolveUserIdAsync();
+            if (string.IsNullOrWhiteSpace(currentUserId))
+                return Unauthorized();
+
+            var currentUser = await _userServices.GetByIdAsync(currentUserId);
+            if (currentUser == null || currentUser.PermissionLevel != 1)
+                return Forbid();
+
+            if (id == currentUserId)
+                return BadRequest(new { message = "You cannot delete your own account." });
+
+            var existing = await _userServices.GetByIdAsync(id);
+            if (existing == null)
+                return NotFound(new { message = "User not found." });
+
+            var deleted = await _userServices.DeleteAsync(id);
+            if (!deleted)
+                return StatusCode(500, new { message = "Failed to delete user." });
+
+            return NoContent();
+        }
     }
 }

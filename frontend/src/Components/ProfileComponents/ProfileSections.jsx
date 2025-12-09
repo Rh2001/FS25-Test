@@ -38,7 +38,6 @@ const ProfileSections = ({ isAdmin }) => {
       >
         {isAdmin ? (
           <>
-            {/* Cards only visible by Admins */}
             <Card
               title="Manage Games"
               description="Add, edit, or remove games from the store."
@@ -56,17 +55,17 @@ const ProfileSections = ({ isAdmin }) => {
               description="Check users and permissions."
               buttonText="Open User List"
               colorClass="bg-emerald-600 hover:bg-emerald-700"
+              onClick={() => {
+                navigate("/admin/users");
+                if (typeof window !== "undefined") {
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }
+              }}
             />
-            <Card
-              title="Analytics"
-              description="View store stats and activity (placeholder)."
-              buttonText="View Analytics"
-              colorClass="bg-purple-600 hover:bg-purple-700"
-            />
+            
           </>
         ) : (
           <>
-            {/* Cards only visible by Regular Users */}
             <Card
               title="Account Settings"
               description="Update your account details and password."
@@ -79,12 +78,7 @@ const ProfileSections = ({ isAdmin }) => {
               buttonText="Get Support"
               colorClass="bg-emerald-600 hover:bg-emerald-700"
             />
-            <Card
-              title="News & Updates"
-              description="Stay up to date with the latest news and patch notes."
-              buttonText="View News"
-              colorClass="bg-purple-600 hover:bg-purple-700"
-            />
+            
           </>
         )}
       </motion.div>

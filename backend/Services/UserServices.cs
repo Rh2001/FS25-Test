@@ -124,5 +124,10 @@ namespace TestApp.Services
             var result = await _userCollection.UpdateOneAsync(u => u.Id == userId, update);
             return result.ModifiedCount > 0 || result.MatchedCount > 0;
         }
+         public async Task<bool> DeleteAsync(string id)
+        {
+            var result = await _userCollection.DeleteOneAsync(u => u.Id == id);
+            return result.DeletedCount > 0;
+        }
     }
 }

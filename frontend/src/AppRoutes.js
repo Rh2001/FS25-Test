@@ -6,6 +6,7 @@ import HomePage from "./Components/HomePage";
 import Login from "./Components/Login";
 import PaymentSuccess from "./Components/PaymentSuccess";
 import GameManagement from "./Components/ProfileComponents/GameManagement";
+import UsersManagement from "./Components/ProfileComponents/UserManagement";
 import ProfilePage from "./Components/ProfilePage";
 import Register from "./Components/Register";
 import StorePage from "./Components/StorePage";
@@ -53,6 +54,10 @@ const AppRoutes = [
     {
         path: "/payment/success",
         element: <PaymentSuccess/>
+    },
+    {
+        path: "/admin/users",
+        element: <UsersManagement/>
     }
 
 ]
