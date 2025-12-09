@@ -67,12 +67,6 @@ const ProfileSections = ({ isAdmin }) => {
         ) : (
           <>
             <Card
-              title="Account Settings"
-              description="Update your account details and password."
-              buttonText="Manage Account"
-              colorClass="bg-sky-600 hover:bg-sky-700"
-            />
-            <Card
               title="Support"
               description="Need help? Contact support or browse the help center."
               buttonText="Get Support"

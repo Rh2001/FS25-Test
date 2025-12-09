@@ -1,6 +1,7 @@
 // Cleaner routing configuration
 
 import AstroMan from "./Components/AstroMan";
+import ContactPage from "./Components/Contact";
 import GamePage from "./Components/GamePage";
 import HomePage from "./Components/HomePage";
 import Login from "./Components/Login";
@@ -25,10 +26,6 @@ const AppRoutes = [
     {
         path: "/store" ,
         element: <StorePage />
-    },
-    {
-        path: "/register",
-        element: <Register />
     },
 
     {
@@ -58,6 +55,11 @@ const AppRoutes = [
     {
         path: "/admin/users",
         element: <UsersManagement/>
+    },
+
+    {
+        path: "/contact",
+        element: <ContactPage/>
     }
 
 ]
