@@ -1,14 +1,25 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState, memo } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
 import profBG01 from "../GlobalAssets/profBG01.jpg";
 import profBG02 from "../GlobalAssets/profBG02.jpg";
 import ProfileHeader from "./ProfileHeader";
 import ProfilePurchases from "./ProfilePurchases";
 import ProfileSections from "./ProfileSections";
-import { sectionVariants } from "../GlobalFunctions/Variants";
 
 const API_BASE = process.env.REACT_APP_API_URL || "https://localhost:443";
+
+const ProfileBackground = memo(function ProfileBackground({ src }) {
+  return (
+    <div className="pointer-events-none absolute inset-0 -z-10">
+      <img
+        src={src}
+        alt="Profile Background"
+        className="w-full h-full object-cover opacity-30"
+      />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/70 to-black/90" />
+    </div>
+  );
+});
 
 const ProfileScreen = () => {
   const navigate = useNavigate();
@@ -70,25 +81,12 @@ const ProfileScreen = () => {
   }, []);
 
   const isAdmin = permission === 1;
-  const profileBg = isAdmin ? profBG01 : profBG02;
-
-  const Background = () => (
-    <div className="pointer-events-none absolute inset-0 -z-10">
-      <img
-        src={profileBg}
-        alt="Profile Background"
-        className="w-full h-full object-cover opacity-40"
-      />
-      <div className="absolute inset-0 bg-gradient-to-br from-[#140b26] via-[#1b1033] to-[#3b0764] mix-blend-multiply" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(216,180,254,0.5),_transparent_55%),_radial-gradient(circle_at_bottom,_rgba(56,189,248,0.35),_transparent_55%)]" />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/60 to-black/85" />
-    </div>
-  );
+  const profileBg = useMemo(() => (isAdmin ? profBG01 : profBG02), [isAdmin]);
 
   if (!contentReady) {
     return (
-      <main className="relative min-h-screen bg-[#0b0e14] text-white pt-24 px-6 overflow-hidden">
-        <Background />
+      <main className="relative min-h-screen bg-[#050712] text-white pt-24 px-4 md:px-6 overflow-hidden">
+        <ProfileBackground src={profileBg} />
         <div className="max-w-6xl mx-auto relative z-10 flex items-start justify-center">
           <div className="mt-10 text-gray-100 text-sm">
             Loading your library…
@@ -99,19 +97,14 @@ const ProfileScreen = () => {
   }
 
   return (
-    <main className="relative min-h-screen bg-[#0b0e14] text-white pt-24 px-6 overflow-hidden">
-      <Background />
-      <motion.div
-        className="max-w-6xl mx-auto relative z-10 pb-20"
-        variants={sectionVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        <div className="mb-10 bg-gradient-to-br from-purple-500/40 via-fuchsia-500/40 to-sky-400/40 border border-purple-300/60 rounded-3xl px-6 py-6 shadow-[0_20px_60px_rgba(15,23,42,0.9)] backdrop-blur-2xl">
+    <main className="relative min-h-screen bg-[#050712] text-white pt-24 px-4 md:px-6 overflow-hidden">
+      <ProfileBackground src={profileBg} />
+      <div className="max-w-6xl mx-auto relative z-10 pb-16 md:pb-20 space-y-8">
+        <div className="bg-slate-900/85 border border-slate-700/80 rounded-2xl md:rounded-3xl px-4 md:px-6 py-5 md:py-6 shadow-lg">
           <ProfileHeader isAdmin={isAdmin} username={username} />
         </div>
 
-        <div className="mb-10 bg-gradient-to-br from-purple-500/40 via-fuchsia-500/40 to-sky-400/40 border border-purple-300/60 rounded-3xl px-6 py-6 shadow-[0_20px_60px_rgba(15,23,42,0.9)] backdrop-blur-2xl">
+        <div className="bg-slate-900/85 border border-slate-700/80 rounded-2xl md:rounded-3xl px-4 md:px-6 py-5 md:py-6 shadow-lg">
           <ProfilePurchases
             loadingPurchases={loadingPurchases}
             purchaseError={purchaseError}
@@ -119,10 +112,10 @@ const ProfileScreen = () => {
           />
         </div>
 
-        <div className="bg-gradient-to-br from-purple-500/40 via-fuchsia-500/40 to-sky-400/40 border border-purple-300/60 rounded-3xl px-6 py-6 shadow-[0_20px_60px_rgba(15,23,42,0.9)] backdrop-blur-2xl">
+        <div className="bg-slate-900/85 border border-slate-700/80 rounded-2xl md:rounded-3xl px-4 md:px-6 py-5 md:py-6 shadow-lg">
           <ProfileSections isAdmin={isAdmin} />
         </div>
-      </motion.div>
+      </div>
     </main>
   );
 };
