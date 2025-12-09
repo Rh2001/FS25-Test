@@ -1,7 +1,7 @@
 // InputField for the register component
 import React from "react";
 
-export default function InputField({ label, name, type = "text", value, onChange, error, autoComplete }) {
+function InputField({ label, name, type = "text", value, onChange, error, autoComplete }) {
   return (
     <div className="flex flex-col gap-1">
       <label htmlFor={name} className="text-xs text-gray-400">{label}</label>
@@ -20,3 +20,4 @@ export default function InputField({ label, name, type = "text", value, onChange
     </div>
   );
 }
+export default InputField;

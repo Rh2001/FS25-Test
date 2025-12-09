@@ -1,7 +1,8 @@
-import React, { useEffect } from "react";
+/* Simple action prompt popup for when the admin wants to delete a game. Can be re-used. */
+
 import { motion, AnimatePresence } from "framer-motion";
 
-const AdminActionPrompt = ({
+const AdminActionPrompt = ({ 
   open,
   title,
   message,

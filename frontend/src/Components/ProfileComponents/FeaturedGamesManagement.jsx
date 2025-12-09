@@ -1,11 +1,13 @@
+/* Component dedicated to managing featured games in the admin profile section, can be re-used but preferably should only be used in the game management tab */
+
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import AdminActionPrompt from "./AdminActionPrompt";
 import { sectionVariants, containerVariants, gameCardVariants } from "../GlobalFunctions/Variants";
 
-const API_BASE = process.env.REACT_APP_API_URL || "https://localhost:443";
+const API_BASE = process.env.REACT_APP_API_URL || "https://localhost:443"; // Same as before, either get it from the environment variable or default to localhost
 
-const FeaturedGamesManagement = ({ authHeader, onMessage }) => {
+const FeaturedGamesManagement = ({ authHeader, onMessage }) => { // States to manage featured games and form inputs
   const [featuredGames, setFeaturedGames] = useState([]);
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
@@ -14,11 +16,11 @@ const FeaturedGamesManagement = ({ authHeader, onMessage }) => {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pendingDelete, setPendingDelete] = useState(null);
 
-  const loadFeaturedGames = async () => {
+  const loadFeaturedGames = async () => { // Asynchronous function to load featured games from the API, updates state accordingly
     try {
       const res = await fetch(`${API_BASE}/api/featured-games`);
       if (!res.ok) {
-        setFeaturedGames([]);
+        setFeaturedGames([]); // If the response is not ok, set featured games to an empty array so that the page can still load
         return;
       }
       const data = await res.json();
@@ -33,7 +35,7 @@ const FeaturedGamesManagement = ({ authHeader, onMessage }) => {
   }, []);
 
   const handleAddFeatured = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Stops refreshing when submitting the form
     onMessage("");
 
     if (!title.trim()) {
@@ -47,7 +49,7 @@ const FeaturedGamesManagement = ({ authHeader, onMessage }) => {
       return;
     }
 
-    const payload = {
+    const payload = { // Payload to send to the API.
       title,
       description: description || "",
       imageUrl: imageUrl || "",

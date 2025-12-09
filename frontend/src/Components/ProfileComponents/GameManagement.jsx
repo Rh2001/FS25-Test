@@ -1,3 +1,5 @@
+/* The main component for managing games in the admin profile section, combining store and featured games management. */ 
+
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -47,7 +49,7 @@ const GameManagement = () => {
     );
   }
 
-  if (!allowed) {
+  if (!allowed) { // Section for access being denied
     return (
       <main className="relative min-h-screen bg-[#0b0e14] text-white pt-24 px-6 overflow-hidden">
         <div className="pointer-events-none absolute inset-0 -z-10">

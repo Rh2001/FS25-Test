@@ -1,3 +1,5 @@
+/* Simple header change, changes the header text based on whether the user is an admin or not */ 
+
 import React from "react";
 import { motion } from "framer-motion";
 import { sectionVariants } from "../GlobalFunctions/Variants";

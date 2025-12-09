@@ -3,7 +3,7 @@ import RegisterForm from "./RegisterForm";
 import { motion } from "framer-motion";
 import Space01 from "./Assets/Space01.jpg";
 
-export default function RegisterPage() {
+function RegisterPage() {
   return (
     <div className="min-h-screen bg-[#0b0e14] text-white flex bg-cover bg-center bg-no-repeat"
     style={{ backgroundImage: `url(${Space01})` }}>
@@ -21,3 +21,4 @@ export default function RegisterPage() {
     </div>
   );
 }
+export default RegisterPage;
