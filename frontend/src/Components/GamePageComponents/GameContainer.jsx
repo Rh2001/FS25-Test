@@ -18,18 +18,32 @@ const GamePage = () => {
     const fetchGame = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`${API_BASE}/api/store-games/${id}`);
-        if (!res.ok) {
-          if (res.status === 404) {
-            setError("Game not found.");
-          } else {
-            setError("Failed to load game.");
-          }
-          setLoading(false);
+        setError("");
+        setGame(null);
+
+        let res = await fetch(`${API_BASE}/api/store-games/${id}`);
+        if (res.ok) {
+          const data = await res.json();
+          setGame(data);
           return;
         }
-        const data = await res.json();
-        setGame(data);
+
+        if (res.status === 404) {
+          res = await fetch(`${API_BASE}/api/featured-games/${id}`);
+          if (res.ok) {
+            const data = await res.json();
+            setGame(data);
+            return;
+          }
+          if (res.status === 404) {
+            setError("Game not found.");
+            return;
+          }
+          setError("Failed to load game.");
+          return;
+        }
+
+        setError("Failed to load game.");
       } catch {
         setError("Failed to load game.");
       } finally {
@@ -53,21 +67,27 @@ const GamePage = () => {
     if (!gameId) return;
 
     try {
-      const res = await fetch(`${API_BASE}/api/user/purchases`, {
+      const res = await fetch(`${API_BASE}/api/payments/create-checkout-session`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ gameId }),
+        body: JSON.stringify({ GameId: gameId }),
       });
 
       if (!res.ok) {
-        console.error("Failed to record purchase");
+        console.error("Failed to create Stripe session");
         return;
       }
 
-      setShowPurchasePrompt(true);
+      const { checkoutUrl } = await res.json();
+      if (!checkoutUrl) {
+        console.error("No checkout URL returned");
+        return;
+      }
+
+      window.location.href = checkoutUrl;
     } catch (e) {
       console.error(e);
     }
@@ -159,13 +179,17 @@ const GamePage = () => {
 
           <div>
             <h1 className="text-3xl font-extrabold mb-2">{game.title}</h1>
-            <p className="text-sm text-gray-300 mb-1">{game.genre}</p>
+            {game.genre && (
+              <p className="text-sm text-gray-300 mb-1">{game.genre}</p>
+            )}
             {game.platform && (
               <p className="text-xs text-gray-400 mb-4">
                 Platform: {game.platform}
               </p>
             )}
-            <p className="text-gray-200 mb-6">{game.description}</p>
+            {game.description && (
+              <p className="text-gray-200 mb-6">{game.description}</p>
+            )}
 
             <div className="flex items-center justify-between mb-6">
               <span className="text-2xl font-bold text-sky-400">

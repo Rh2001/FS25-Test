@@ -1,4 +1,5 @@
 using TestApp.Extensions;
+using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,9 @@ builder.Services.AddMySwagger();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddAuthorization();
+
+var stripeSecretKey = builder.Configuration["Stripe:SecretKey"];
+StripeConfiguration.ApiKey = stripeSecretKey;
 
 var app = builder.Build();
 
